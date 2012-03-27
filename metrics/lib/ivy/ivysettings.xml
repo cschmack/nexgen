@@ -18,7 +18,7 @@
     </url>
     
     <url name="mvn.central" m2compatible="true">
-      <artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+      <artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
       <ivy pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/ivy.xml"/>
     </url>
 

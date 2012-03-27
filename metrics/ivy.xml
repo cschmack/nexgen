@@ -19,9 +19,7 @@
         <dependency org="org.cliffc.high_scale_lib" name="high-scale-lib" rev="1.0" conf="compile->default"/>
 
         <!-- everybody should just use this stuff -->
-        <dependency org="com.google.guava" name="guava" rev="[10.0.1,)" conf="compile->default,optional(jsr305)"/>
-        <!-- protobuf, do we use it? -->
-        <dependency org="com.google.protobuf" name="protobuf-java" rev="[2.4.1,)" conf="compile->default"/>
+        <dependency org="com.google.guava" name="guava" rev="[11.0.0,)" conf="compile->default"/>
 
         <!-- apache common commons -->
         <dependency org="commons-lang" name="commons-lang" rev="2.5" conf="compile->default"/>
