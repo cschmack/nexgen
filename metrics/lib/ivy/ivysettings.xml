@@ -47,6 +47,7 @@
     <chain name="neustar" returnFirst="true">
       <resolver ref="mvn.central"/>
       <resolver ref="com.springsource.repository.bundles.release"/>
+      <resolver ref="com.springsource.repository.bundles.external"/>
     </chain>
 
     <filesystem name="localjars">
