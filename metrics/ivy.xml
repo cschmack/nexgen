@@ -1,0 +1,49 @@
+<ivy-module version="2.0">
+    <info organisation="biz.neustar.service" module="metrics"/>
+    <configurations defaultconfmapping="default->default">
+      <conf name="default" visibility="private" />
+      <conf name="compile" transitive="true" visibility="private" />
+      <conf name="runtime" extends="compile" description="everything needed to run this module" />
+      <conf name="test" extends="runtime" transitive="true" visibility="private" />
+    </configurations>
+    
+    <dependencies defaultconf="default">
+        <!-- testing, you need these, really -->
+        <dependency org="junit" force="true" name="junit" rev="4.8.2" conf="test->default"/>
+        <dependency org="org.mockito" name="mockito-all" rev="1.8.5" conf="test->default"/>
+        <dependency org="emma" force="true" name="emma" rev="2.0.5312" conf="test->default"/>
+        <dependency org="emma" force="true" name="emma_ant" rev="2.0.5312" conf="test->default"/>
+        <dependency org="pmd" name="pmd" rev="4.2.5" conf="test->default"/>
+
+        <!-- excellent concurrency support library -->
+        <dependency org="org.cliffc.high_scale_lib" name="high-scale-lib" rev="1.0" conf="compile->default"/>
+
+        <!-- everybody should just use this stuff -->
+        <dependency org="com.google.guava" name="guava" rev="[10.0.1,)" conf="compile->default,optional(jsr305)"/>
+        <!-- protobuf, do we use it? -->
+        <dependency org="com.google.protobuf" name="protobuf-java" rev="[2.4.1,)" conf="compile->default"/>
+
+        <!-- apache common commons -->
+        <dependency org="commons-lang" name="commons-lang" rev="2.5" conf="compile->default"/>
+        <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="compile->default"/>
+        <dependency org="commons-collections" name="commons-collections" rev="3.2.1" conf="compile->default"/>
+        <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="compile->default"/>
+        <dependency org="commons-configuration" name="commons-configuration" rev="1.6" conf="compile->default"/>
+
+        <!-- logging -->
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.6.3" conf="compile->default"/>
+        <dependency org="org.slf4j" name="slf4j-ext" rev="1.6.3" conf="compile->default"/>
+        <dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.6.3" conf="runtime->default"/>
+        <dependency org="org.slf4j" name="jul-to-slf4j" rev="1.6.3" conf="runtime->default"/>
+
+        <!-- use these unless using using log4j for embedded cassandra testing -->
+        <dependency org="org.slf4j" name="log4j-over-slf4j" rev="1.6.3" conf="compile->default"/>
+        <!-- do we hook this? -->
+        <dependency org="ch.qos.logback" name="logback-core" rev="0.9.30" conf="compile->default"/>
+        <dependency org="ch.qos.logback" name="logback-classic" rev="0.9.30" conf="runtime->default"/>
+
+        <exclude module="ant"/>
+        <exclude module="google-collections"/>
+        <exclude module="commons-logging"/>
+    </dependencies>
+</ivy-module>

@@ -1,0 +1,185 @@
+<!-- dont include directly, use common.xml -->
+<project name="test-common">
+
+  <!-- junit support -->
+  <macrodef name="test-units">  
+    <element name="junit-args" optional="yes"/>
+    <element name="junit-classpath" optional="yes"/>
+    <attribute name="coverage" default="yes" />
+    <attribute name="include-pattern" default="**/*Test.java" />
+    <attribute name="exclude-pattern" default="" />
+    <attribute name="jvmargs" default="" />
+    <attribute name="maxmemory" default="1028m" />
+    <sequential>
+      <delete dir="${reports.dir}/units"/>
+      <mkdir dir="${reports.dir}/units"/>
+      
+      <delete dir="${report.dir}/coverage"/>
+
+      <antcall target="-emma-init">
+        <param name="coverage.enabled" value="@{coverage}"/>
+      </antcall>
+      
+      <junit printsummary="yes" 
+        haltonfailure="false"
+        maxmemory="@{maxmemory}"
+        failureProperty="test.failure">
+          <classpath>
+              <!-- load from test conf first -->
+              <pathelement path="${test.dir}:${config.dir}"/>
+              <!-- put coverage instrumented classes first on classpath -->
+              <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
+              <fileset dir="${lib.dir}/test" includes="*.jar" excludes="ant.jar"/>
+              <junit-classpath/>
+          </classpath>
+          
+          <jvmarg value="-Demma.coverage.out.file=${coverage.build.dir}/coverage.emma" />
+          <jvmarg value="-Demma.coverage.out.merge=true" />
+          <jvmarg line="@{jvmargs}" />
+          <formatter type="xml"/>
+          <batchtest fork="yes" todir="${reports.dir}/units">
+            <fileset dir="${test.dir}">
+              <include name="@{include-pattern}"/>
+              <exclude name="@{exclude-pattern}"/>
+            </fileset>
+          </batchtest>
+        </junit>
+        <fail message="Unit Tests Failed" if="test.failure" />
+        
+        <antcall target="-emma-final">
+          <param name="coverage.enabled" value="@{coverage}"/>
+        </antcall>
+        
+      </sequential>
+  </macrodef>
+  
+  <!-- emma support -->
+  <target name="-emma-init" if="${coverage.enabled}">
+
+    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
+    <mkdir dir="${coverage.report.dir}"/>
+
+  	<!-- Instrument classes in the build directory -->
+    <taskdef resource="emma_ant.properties">
+      <classpath>
+        <pathelement location="${lib.dir}/test/emma.jar" />
+        <pathelement location="${lib.dir}/test/emma_ant.jar" />
+      </classpath>
+    </taskdef>
+    
+    <emma enabled="${coverage.enabled}" >
+      <instr destdir="${coverage.build.dir}" metadatafile="${coverage.build.dir}/metadata.emma" merge="false">
+        <instrpath>
+          <pathelement location="${build.dir}"/>
+        </instrpath>
+      </instr>
+    </emma>
+  </target>
+	
+  <target name="-emma-final" if="${coverage.enabled}">
+    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
+    <taskdef resource="emma_ant.properties">
+      <classpath>
+        <pathelement location="${lib.dir}/test/emma.jar" />
+        <pathelement location="${lib.dir}/test/emma_ant.jar" />
+      </classpath>
+    </taskdef>
+    <!-- generate coverage report -->
+    <emma enabled="${coverage.enabled}" >
+      <report>
+        <sourcepath id="coverage.src.dir">
+          <pathelement path="${src.dir}"/>
+        </sourcepath>
+        <fileset dir="${coverage.build.dir}">
+          <include name="*.emma"/>
+        </fileset>
+        <txt outfile="${coverage.report.dir}/coverage.txt"/>
+        <html outfile="${coverage.report.dir}/coverage.html"/>
+        <xml outfile="${coverage.report.dir}/coverage.xml"/>
+      </report>
+    </emma>
+  </target>
+  
+  
+  <!-- cuke support -->
+  
+  <property name="jruby.home" value="${basedir}/lib/.jruby"/>
+  
+  <path id="cuke.classpath">
+    <fileset dir="${lib.dir}/test">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <!-- required by cuke4duke.ant.JRubyTask.getJrubyClasspath -->
+  <path id="jruby.classpath">
+    <path refid="cuke.classpath"/>
+  </path>
+  
+  <target name="-install-cuke-gems" unless="cuke-gem.exists">
+    <taskdef name="gem" classname="cuke4duke.ant.GemTask" classpathref="cuke.classpath"/>
+    <!-- lib/.jruby/gems/cuke4duke-0.4.3 -->
+    <gem args="install cuke4duke --version ${cukeVersion}"/>
+  </target>
+  
+  <!-- needs project to have:
+       lib/test, test/stories
+       test/ruby (extra support in ruby, if required)
+       
+  -->
+  <!-- you don't necessarily have to cucumber.xml for spring, you can set it:  -Dcuke4duke.springXml=something_else.xml  -->
+  <macrodef name="test-stories">
+    <element name="junit-args" optional="yes"/>
+    <element name="junit-classpath" optional="yes"/>
+    <attribute name="jvmargs" default="" />
+    <attribute name="cukeVersion" default="0.4.3"/>
+    <attribute name="cukeVerbose" default="false"/>
+    <attribute name="cukeColor" default="yes"/>
+    <attribute name="coverage" default="yes" />
+  	
+    <sequential>
+      <available property="cuke-gem.exists" file="${jruby.home}/gems/cuke4duke-@{cukeVersion}"/>
+      
+      <antcall target="-install-cuke-gems">
+        <param name="cukeVersion" value="@{cukeVersion}"/>
+      </antcall>
+      
+      <taskdef name="cucumber" classname="cuke4duke.ant.CucumberTask" classpathref="cuke.classpath"/>
+      
+        <condition property="cukeVerboseSwitch" value="--verbose" else="">
+          <istrue value="@{cukeVerbose}"/>
+        </condition>
+
+        <condition property="cukeColorSwitch" value="--color" else="">
+          <istrue value="@{cukeColor}"/>
+        </condition>
+
+      <antcall target="-emma-init">
+        <param name="coverage.enabled" value="@{coverage}"/>
+      </antcall>
+
+      <cucumber
+        args="${cukeVerboseSwitch} --require ${test.build.dir} --require ${test.dir}/ruby ${cukeColorSwitch} --format pretty --format junit --out ${reports.dir}/stories ${test.dir}/stories"
+        objectFactory="spring">
+         <classpath>
+           <!-- load from test conf first -->
+           <pathelement path="${test.dir}:${config.dir}"/>
+           <!-- put coverage instrumented classes first on classpath -->
+           <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
+           <fileset dir="${lib.dir}/test" includes="*.jar"/>
+           <junit-classpath/>
+       </classpath>
+        <jvmarg value="-Demma.coverage.out.file=${coverage.build.dir}/coverage.emma" />
+        <jvmarg value="-Demma.coverage.out.merge=true" />
+        <jvmarg line="@{jvmargs}" />
+      </cucumber>
+
+      <antcall target="-emma-final">
+          <param name="coverage.enabled" value="@{coverage}"/>
+      </antcall>
+
+    </sequential>
+  </macrodef>
+        
+</project>
+

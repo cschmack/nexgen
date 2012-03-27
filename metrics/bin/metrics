@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# /etc/init.d/@proj_name@
+#
+# Startup script for @proj_name@ App
+# 
+# chkconfig: 2345 20 80
+# description: Starts and stops App
+# pidfile: /var/run/@proj_name@/@proj_name@.pid
+
+. /etc/rc.d/init.d/functions
+
+export JAVA_HOME=/usr/java/default
+export APP_NAME=metrics
+export APP_HOME=/usr/local/share/$APP_NAME
+export APP_OWNR=$APP_NAME
+LOG_FILE=/var/log/$APP_NAME/$APP_NAME.log
+LOCK_FILE=/var/lock/subsys/$APP_NAME
+PID_FILE=/var/run/$APP_NAME/$APP_NAME.pid
+APP_EXEC=/usr/local/sbin/$APP_NAME.sh
+
+RETVAL=0
+
+start() {
+  echo -n $"Starting $APP_NAME: "
+  su $APP_OWNR -c "$APP_EXEC -p $PID_FILE " > $LOG_FILE 2>&1
+  RETVAL=$?
+  if [ $RETVAL -eq 0 ]; then
+    success $"$APP_NAME startup"
+    touch $LOCK_FILE
+    echo
+  else
+    failure $"$APP_NAME startup"
+    RETVAL=1; exit $RETVAL;
+  fi
+}
+
+stop() {
+  echo -n $"Shutting down $APP_NAME: "
+  killproc -p $PID_FILE $APP_NAME
+  if [ $RETVAL -eq 0 ]; then
+    success $"$APP_NAME shutdown"
+    echo
+    rm $LOCK_FILE
+  else
+    failure $"$APP_NAME shutdown"
+    echo  
+    RETVAL=1; exit $RETVAL
+  fi
+  RETVAL=0
+}
+
+restart() {
+  stop
+  start
+}
+
+
+case "$1" in
+  start)
+    start
+    RETVAL=$?
+  ;;
+  stop)
+    stop
+    RETVAL=$?
+  ;;
+  restart)
+    restart
+    RETVAL=$?
+  ;;
+  status)
+    status -p $PID_FILE $APP_NAME
+    RETVAL=$?
+  ;;
+  *)
+    echo "Usage: `basename $0` start|stop|restart|status"
+    exit 1
+esac
+
+exit $RETVAL
