@@ -33,7 +33,7 @@
         <dependency org="commons-configuration" name="commons-configuration" rev="1.6" conf="compile->default"/>
 
 
-        <!-- spring -->
+        <!-- spring 
         <dependency org="cglib" name="cglib-nodep" rev="2.2+"  conf="test,compile->default" />
         <dependency org="org.springframework" name="org.springframework.core" rev="3.1.1.RELEASE"  conf="test,compile->runtime" />
         <dependency org="org.springframework" name="org.springframework.aop" rev="3.1.1.RELEASE"   conf="test,compile->runtime" />
@@ -45,6 +45,7 @@
         <dependency org="org.springframework" name="org.springframework.expression" rev="3.1.1.RELEASE"  conf="test,compile->runtime" />
         <dependency org="org.springframework" name="org.springframework.test" rev="3.1.1.RELEASE" conf="test->default"/>
 
+-->
 
 
         <!-- logging -->
