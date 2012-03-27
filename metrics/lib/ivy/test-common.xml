@@ -168,7 +168,7 @@
               <pathelement location="target/classes"/>
               <pathelement location="target/test-classes"/>
           </classpath>
-          <arg value="--glue"/>
+          <arg value="- - glue"/>
           <arg value="cucumber.examples.java.helloworld"/>
           <arg value="src/test/resources"/>
       </java>
