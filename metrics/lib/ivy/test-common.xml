@@ -146,6 +146,8 @@
       
       <taskdef name="cucumber" classname="cuke4duke.ant.CucumberTask" classpathref="cuke.classpath"/>
       
+      
+      
         <condition property="cukeVerboseSwitch" value="--verbose" else="">
           <istrue value="@{cukeVerbose}"/>
         </condition>
@@ -157,7 +159,20 @@
       <antcall target="-emma-init">
         <param name="coverage.enabled" value="@{coverage}"/>
       </antcall>
-
+<!--
+      <java classname="cucumber.cli.Main" fork="true">
+          <classpath>
+              <fileset dir="${jars}">
+                  <include name="**/*.jar"/>
+              </fileset>
+              <pathelement location="target/classes"/>
+              <pathelement location="target/test-classes"/>
+          </classpath>
+          <arg value="--glue"/>
+          <arg value="cucumber.examples.java.helloworld"/>
+          <arg value="src/test/resources"/>
+      </java>
+-->
       <cucumber
         args="${cukeVerboseSwitch} --require ${test.build.dir} --require ${test.dir}/ruby ${cukeColorSwitch} --format pretty --format junit --out ${reports.dir}/stories ${test.dir}/stories"
         objectFactory="spring">
@@ -180,6 +195,6 @@
 
     </sequential>
   </macrodef>
-        
+  
 </project>
 
