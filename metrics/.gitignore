@@ -2,3 +2,4 @@ lib/runtime
 lib/test
 lib/compile
 lib/default
+build
