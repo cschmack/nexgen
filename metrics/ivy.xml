@@ -15,8 +15,11 @@
         <dependency org="emma" force="true" name="emma_ant" rev="2.0.5312" conf="test->default"/>
         <dependency org="pmd" name="pmd" rev="4.2.5" conf="test->default"/>
 
-        <!-- excellent concurrency support library -->
+        <!-- 
         <dependency org="org.cliffc.high_scale_lib" name="high-scale-lib" rev="1.0" conf="compile->default"/>
+         -->
+        <!-- excellent concurrency support library -->
+        <dependency org="com.github.stephenc.high-scale-lib" name="high-scale-lib" rev="1.1.4"/>
 
         <!-- everybody should just use this stuff -->
         <dependency org="com.google.guava" name="guava" rev="[11.0.0,)" conf="compile->default"/>
