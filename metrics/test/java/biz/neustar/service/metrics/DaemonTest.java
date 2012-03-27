@@ -16,7 +16,13 @@ import org.junit.Test;
 public class DaemonTest {
 
     @Test
+    public void testCreate() {
+        Daemon daemon = new Daemon();
+        assertNotNull(daemon);
+    }
+    
+    @Test(expected=UnsupportedOperationException.class)
     public void testStartup() {
-        
+        Daemon.main(new String[] {});
     }
 }

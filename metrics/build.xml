@@ -14,8 +14,8 @@
   <property name="lib.dir" location="${basedir}/lib" />
   
   <!-- sources -->
-  <property name="src.dir" location="${basedir}/src" />
-  <property name="test.dir" location="${basedir}/test" />
+  <property name="src.dir" location="${basedir}/src/main/java" />
+  <property name="test.dir" location="${basedir}/test/java" />
     
   <!-- build dirs -->
   <property name="build.dir" value="${basedir}/build/classes"/>
@@ -60,6 +60,7 @@
       <classpath>
         <path refid="test.classpath"/>
         <pathelement location="${config.dir}" />
+        <pathelement location="${build.dir}" />
       </classpath>
     </javac>
   </target>
@@ -92,8 +93,9 @@
   <!-- TODO -->
   <target name="coverage"/>
   
-  <target name="test" depends="compile-tests">
-<!--    <test-units/>
+  <target name="test" depends="compile-tests" description="run unit and story tests">
+    <test-units/>
+<!--    
     <test-stories />
 -->
   </target>
