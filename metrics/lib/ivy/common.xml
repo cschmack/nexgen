@@ -16,6 +16,14 @@
     <condition> <not> <contains string="${ant.version}" substring="1.8"/> </not> </condition>
     </fail>
   </target>
+ 
+  <macrodef name="recreate-dir">
+    <attribute name="dir"/>
+    <sequential>
+      <delete dir="@{dir}"/>
+      <mkdir dir="@{dir}"/>
+    </sequential>
+  </macrodef>
 
   <macrodef name="git-version">
     <sequential>

@@ -92,19 +92,18 @@
     </jar>
   </target>
 
-  <!-- TODO -->
-  <target name="coverage"/>
-  
   <target name="test" depends="compile-tests" description="run unit and story tests">
-    <test-units coverage="true"/>
+    <test-units/>
 <!--    
     <test-stories />
 -->
   </target>
 
+  <target name="analysis" depends="pmd,cpd,sloc"/>
+
 
   <!-- TODO -->
-  <target name="package" depends="clean-resolve,coverage,test,dist"/>
+  <target name="package" depends="clean-resolve,test,analysis,dist"/>
 
 </project>
 
