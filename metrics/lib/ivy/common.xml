@@ -1,6 +1,11 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env"/>
 
+  <!-- config -->
+  <condition property="user.config" value="${env.CONFIG}" else="${env.USER}">
+    <isset property="env.CONFIG"/>
+  </condition>
+
   <!-- change the default order, jboss pom's didnt sha1 validate - either ivy bug or sha1 sig -->
   <!-- property name="ivy.checksums" value="md5,sha1" -->
   <!-- disabling all checks since mvn central and jboss repo has tons of invalid checksums, and it's big pain to fix manually -->
@@ -16,8 +21,8 @@
     <condition> <not> <contains string="${ant.version}" substring="1.8"/> </not> </condition>
     </fail>
   </target>
-  
-  <target name="generate-docs">
+
+  <target name="generate-docs" description="generate documentation for the project">
     <recreate-dir dir="${basedir}/docs"/>
     <javadoc destdir="${basedir}/docs/java"
            author="true"

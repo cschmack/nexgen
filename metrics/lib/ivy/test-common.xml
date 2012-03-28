@@ -44,7 +44,7 @@
               <junit-classpath/>
           </classpath>
           
-          <jvmarg line="@{jvmargs}" />
+          <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
           <formatter type="xml"/>
           <batchtest todir="${reports.dir}/units">
             <fileset dir="${test.dir}">

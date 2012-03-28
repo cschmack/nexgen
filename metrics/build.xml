@@ -16,7 +16,7 @@
   <property name="lib.dir" location="${basedir}/lib" />
   
   <!-- sources -->
-  <property name="src.dir" location="${basedir}/src/main/java" />
+  <property name="src.dir" location="${basedir}/src/java" />
   <property name="test.dir" location="${basedir}/test/java" />
     
   <!-- build dirs -->
