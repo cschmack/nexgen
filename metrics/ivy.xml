@@ -11,11 +11,13 @@
         <!-- testing, you need these, really -->
         <dependency org="junit" force="true" name="junit" rev="[4.8.2,)" conf="test->default"/>
         <dependency org="org.mockito" name="mockito-all" rev="[1.8.5,)" conf="test->default"/>
+
         <dependency org="org.jacoco" name="org.jacoco.ant" rev="[0.5.6,)" conf="test->default"/>
         <dependency org="org.jacoco" name="org.jacoco.agent" rev="[0.5.6,)" conf="test->default"/>
         <dependency org="org.jacoco" name="org.jacoco.core" rev="[0.5.6,)" conf="test->default"/>
         <dependency org="org.jacoco" name="org.jacoco.report" rev="[0.5.6,)" conf="test->default"/>
         <dependency org="asm" name="asm-all" rev="[3.2.0, 4.0.0)" conf="test->default"/>
+        <dependency org="net.sf.saxon" name="Saxon-HE" rev="[9.0,)" conf="test->default"/>
 <!--
         <dependency org="emma" force="true" name="emma" rev="[2.0.5312,)" conf="test->default"/>
         <dependency org="emma" force="true" name="emma_ant" rev="[2.0.5312,)" conf="test->default"/>
