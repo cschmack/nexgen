@@ -1,11 +1,19 @@
 <!-- dont include directly, use common.xml -->
 <project name="test-common">
 
+  <path id="jacoco.classpath">
+    <fileset dir="${lib.dir}/test">
+      <include name="**/*jacoco*.jar"/>
+      <include name="**/*asm*.jar"/>
+    </fileset>
+  </path>
+
+
   <!-- junit support -->
   <macrodef name="test-units">  
     <element name="junit-args" optional="yes"/>
     <element name="junit-classpath" optional="yes"/>
-    <attribute name="coverage" default="yes" />
+    <attribute name="coverage" default="true" />
     <attribute name="include-pattern" default="**/*Test.java" />
     <attribute name="exclude-pattern" default="" />
     <attribute name="jvmargs" default="" />
@@ -13,14 +21,17 @@
     <sequential>
       <delete dir="${reports.dir}/units"/>
       <mkdir dir="${reports.dir}/units"/>
-      
       <delete dir="${report.dir}/coverage"/>
 
-      <antcall target="-emma-init">
-        <param name="coverage.enabled" value="@{coverage}"/>
-      </antcall>
-      
+     <taskdef name="coverage" classname="org.jacoco.ant.CoverageTask" classpathref="jacoco.classpath"/>
+     <taskdef name="agent" classname="org.jacoco.ant.AgentTask" classpathref="jacoco.classpath"/>
+     <taskdef name="report" classname="org.jacoco.ant.ReportTask" classpathref="jacoco.classpath"/>
+     <taskdef name="merge" classname="org.jacoco.ant.MergeTask" classpathref="jacoco.classpath"/>
+     <taskdef name="dump" classname="org.jacoco.ant.DumpTask" classpathref="jacoco.classpath"/>
+
+     <coverage destfile="${reports.dir}/jacoco.exec" enabled="@{coverage}">
       <junit printsummary="yes" 
+        fork="yes" forkmode="once"
         haltonfailure="false"
         maxmemory="@{maxmemory}"
         failureProperty="test.failure">
@@ -33,73 +44,38 @@
               <junit-classpath/>
           </classpath>
           
-          <jvmarg value="-Demma.coverage.out.file=${coverage.build.dir}/coverage.emma" />
-          <jvmarg value="-Demma.coverage.out.merge=true" />
           <jvmarg line="@{jvmargs}" />
           <formatter type="xml"/>
-          <batchtest fork="yes" todir="${reports.dir}/units">
+          <batchtest todir="${reports.dir}/units">
             <fileset dir="${test.dir}">
               <include name="@{include-pattern}"/>
               <exclude name="@{exclude-pattern}"/>
             </fileset>
           </batchtest>
         </junit>
-        <fail message="Unit Tests Failed" if="test.failure" />
-        
-        <antcall target="-emma-final">
-          <param name="coverage.enabled" value="@{coverage}"/>
-        </antcall>
-        
-      </sequential>
-  </macrodef>
-  
-  <!-- emma support -->
-  <target name="-emma-init" if="${coverage.enabled}">
-
-    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
-    <mkdir dir="${coverage.report.dir}"/>
-
-  	<!-- Instrument classes in the build directory -->
-    <taskdef resource="emma_ant.properties">
-      <classpath>
-        <pathelement location="${lib.dir}/test/emma.jar" />
-        <pathelement location="${lib.dir}/test/emma_ant.jar" />
-      </classpath>
-    </taskdef>
-    
-    <emma enabled="${coverage.enabled}" >
-      <instr destdir="${coverage.build.dir}" metadatafile="${coverage.build.dir}/metadata.emma" merge="false">
-        <instrpath>
-          <pathelement location="${build.dir}"/>
-        </instrpath>
-      </instr>
-    </emma>
-  </target>
-	
-  <target name="-emma-final" if="${coverage.enabled}">
-    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
-    <taskdef resource="emma_ant.properties">
-      <classpath>
-        <pathelement location="${lib.dir}/test/emma.jar" />
-        <pathelement location="${lib.dir}/test/emma_ant.jar" />
-      </classpath>
-    </taskdef>
-    <!-- generate coverage report -->
-    <emma enabled="${coverage.enabled}" >
+     </coverage>
+     <fail message="Unit Tests Failed" if="test.failure" />
+     
       <report>
-        <sourcepath id="coverage.src.dir">
-          <pathelement path="${src.dir}"/>
-        </sourcepath>
-        <fileset dir="${coverage.build.dir}">
-          <include name="*.emma"/>
-        </fileset>
-        <txt outfile="${coverage.report.dir}/coverage.txt"/>
-        <html outfile="${coverage.report.dir}/coverage.html"/>
-        <xml outfile="${coverage.report.dir}/coverage.xml"/>
+         <executiondata>
+          <file file="${reports.dir}/jacoco.exec"/>
+        </executiondata>
+                        
+        <structure name="${ant.project.name}">
+          <classfiles>
+            <fileset dir="${test.build.dir}/"/>
+            <fileset dir="${build.dir}/"/>
+          </classfiles>
+          <sourcefiles encoding="UTF-8">
+            <fileset dir="${src.dir}"/>
+          </sourcefiles>
+        </structure>
+        <html destdir="${reports.dir}/coverage"/>
+        <xml destfile="${reports.dir}/coverage/coverage.xml"/>
       </report>
-    </emma>
-  </target>
-  
+        
+    </sequential>
+  </macrodef>
   
   <!-- cuke support -->
   

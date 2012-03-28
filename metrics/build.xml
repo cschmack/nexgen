@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project name="metrics" default="dist"  xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="metrics" default="dist"  
+    xmlns:ivy="antlib:org.apache.ivy.ant">
+
   <description>
         This project does XYZ FILL ME IN!
   </description>
