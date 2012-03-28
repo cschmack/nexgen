@@ -266,7 +266,7 @@
          ================================= -->
     <target name="clean-lib" description="--> clean the project libraries directory (dependencies)">
         <delete includeemptydirs="true">
-          <fileset dir="${lib.dir}" excludes="**/ivy/*,.jruby/**"/>
+          <fileset dir="${lib.dir}" excludes="**/ivy/**,.jruby/**"/>
         </delete>
     </target>
 
