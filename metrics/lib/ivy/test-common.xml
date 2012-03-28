@@ -55,7 +55,15 @@
         </junit>
      </coverage>
      <fail message="Unit Tests Failed" if="test.failure" />
-     
+    
+      <antcall target="-coverage-report">
+        <param name="coverage.enabled" value="@{coverage}"/>
+      </antcall> 
+        
+    </sequential>
+  </macrodef>
+
+  <target name="-coverage-report" if="${coverage.enabled}">
       <report>
          <executiondata>
           <file file="${reports.dir}/jacoco.exec"/>
@@ -73,9 +81,9 @@
         <html destdir="${reports.dir}/coverage"/>
         <xml destfile="${reports.dir}/coverage/coverage.xml"/>
       </report>
-        
-    </sequential>
-  </macrodef>
+  </target>
+
+   
   
   <!-- cuke support -->
   

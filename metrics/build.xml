@@ -96,7 +96,7 @@
   <target name="coverage"/>
   
   <target name="test" depends="compile-tests" description="run unit and story tests">
-    <test-units coverage="false"/>
+    <test-units coverage="true"/>
 <!--    
     <test-stories />
 -->
