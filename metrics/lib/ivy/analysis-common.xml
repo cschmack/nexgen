@@ -33,7 +33,8 @@
         <pathelement location="${basedir}/lib/ivy"/>
       </classpath>
     </taskdef>
-    <cpd minimumTokenCount="100" outputFile="${reports.dir}/cpd/cpd.txt">
+    <cpd minimumTokenCount="100" format="xml" 
+         outputFile="${reports.dir}/cpd/cpd.xml">
       <fileset dir="${src.dir}">
         <include name="**/*.java"/>
         <exclude name="**/*Test*.java"/>
