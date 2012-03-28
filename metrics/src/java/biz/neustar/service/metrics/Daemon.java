@@ -8,12 +8,21 @@
 
 package biz.neustar.service.metrics;
 
+import com.google.common.util.concurrent.AbstractExecutionThreadService;
+
 /** TBD Fill me in **/
 
-public class Daemon {
-  public static void main(String[] args) {
-    /** TBD Fill me in **/
-    throw new UnsupportedOperationException();
-  }
+public class Daemon extends AbstractExecutionThreadService {
+    
+    @Override
+    protected void run() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public static void main(String[] args) {
+        /** TBD Fill me in **/
+        throw new UnsupportedOperationException();
+    }
 }
 

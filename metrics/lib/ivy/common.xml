@@ -28,8 +28,8 @@
            author="true"
            version="true"
            use="true"
+           classpathref="compile.classpath"
            windowtitle="${ant.project.name} API">
-
       <fileset dir="${src.dir}" defaultexcludes="yes">
         <include name="**"/>
       </fileset>
