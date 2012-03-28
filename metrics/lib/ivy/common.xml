@@ -16,6 +16,22 @@
     <condition> <not> <contains string="${ant.version}" substring="1.8"/> </not> </condition>
     </fail>
   </target>
+  
+  <target name="generate-docs">
+    <recreate-dir dir="${basedir}/docs"/>
+    <javadoc destdir="${basedir}/docs/java"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="${ant.project.name} API">
+
+      <fileset dir="${src.dir}" defaultexcludes="yes">
+        <include name="**"/>
+      </fileset>
+      <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2011-2012 NeuStar, Inc. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
  
   <macrodef name="recreate-dir">
     <attribute name="dir"/>
