@@ -81,16 +81,16 @@
         <html destdir="${reports.dir}/coverage"/>
         <xml destfile="${reports.dir}/coverage/coverage_jacoco.xml"/>
       </report>
-      <!-- -->
-      <copy file="${lib.dir}/ivy/report.dtd" todir="${reports.dir}/coverage"/>
-      <xslt style="${lib.dir}/ivy/jacoco_to_emma.xslt" 
+      <!-- https://issues.jenkins-ci.org/browse/JENKINS-10835 -->
+      <copy file="${lib.dir}/ivy/support/report.dtd" todir="${reports.dir}/coverage"/>
+      <xslt style="${lib.dir}/ivy/support/jacoco_to_emma.xslt" 
             in="${reports.dir}/coverage/coverage_jacoco.xml" 
             out="${reports.dir}/coverage/coverage.xml" >
             <!-- saxon or some other xslt2/xpath2 processor is required -->
           <classpath>
               <pathelement location="${lib.dir}/test/Saxon-HE.jar"/>
               <pathelement location="${lib.dir}/test/org.jacoco.report.jar"/>
-    <path refid="jacoco.classpath"/>
+              <path refid="jacoco.classpath"/>
           </classpath>
         <xmlcatalog>
           <dtd 

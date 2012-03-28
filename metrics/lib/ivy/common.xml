@@ -103,6 +103,8 @@
     </sequential>
   </macrodef>
 
+  <!-- analysis support -->
+  <import file="${basedir}/lib/ivy/analysis-common.xml"/>
   <!-- tests support -->
   <import file="${basedir}/lib/ivy/test-common.xml"/>
 
@@ -272,60 +274,6 @@
     <!-- target: clean -->
   <target name="clean" depends="clean-build, clean-lib" description="--> clean the project" />
 
-
-  <!-- target: pmd -->
-  <target name="pmd" description="--> generate pmd report">
-    <delete dir="${reports.dir}/pmd"/>
-    <mkdir dir="${reports.dir}/pmd"/>    
-    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
-  	  <classpath> 
-        <fileset dir="${lib.dir}/test" includes="pmd.jar"/>
-        <fileset dir="${lib.dir}/test" includes="asm.jar"/>
-        <fileset dir="${lib.dir}/test" includes="jaxen.jar"/>
-        <pathelement location="${basedir}/lib/ivy"/>
-      </classpath>
-    </taskdef>
-    <pmd shortFilenames="true" rulesetfiles="pmd_ruleset.xml">
-			<formatter type="xml" toFile="${reports.dir}/pmd/pmd.xml" />
-			<formatter type="html" toFile="${reports.dir}/pmd/pmd.html"/>
-			<fileset dir="${src.dir}">
-				<include name="**/*.java"/>
-				<exclude name="**/*Test*.java"/>
-			</fileset>
-		</pmd>
-	</target>
-	
-	 <!-- target: cpd - copy and paste detector  -->
-	<target name="cpd">
-		<delete dir="${reports.dir}/cpd"/>
-    <mkdir dir="${reports.dir}/cpd"/>    
-    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" >
-	    <classpath> 
-		        <fileset dir="${lib.dir}/test" includes="pmd.jar"/>
-		        <fileset dir="${lib.dir}/test" includes="asm.jar"/>
-		        <fileset dir="${lib.dir}/test" includes="jaxen.jar"/>
-		        <pathelement location="${basedir}/lib/ivy"/>
-		   
-	      	</classpath>
-	  </taskdef>
-    <cpd minimumTokenCount="100" outputFile="${reports.dir}/cpd/cpd.txt">
-        <fileset dir="${src.dir}">
-					<include name="**/*.java"/>
-					<exclude name="**/*Test*.java"/>
-				</fileset>
-    </cpd>
-	</target>
-	
-	<!-- target: sloc - source lines of code by language -->
-	<target name="sloc" description="generates lines of code per source file by language">
-		<delete file="${reports.dir}/sloccount.sc"/>
-		<echo message="sloccount --wide --details ${src.dir} > ${reports.dir}/sloccount.sc"/>
-		<exec executable="sloccount"           
-          output="${reports.dir}/sloccount.sc"
-				  failifexecutionfails="false">
-        <arg line="--wide --details ${src.dir}"/>
-		</exec>
-	</target>
 </project>
 
 
