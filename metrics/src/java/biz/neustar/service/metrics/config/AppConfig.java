@@ -8,6 +8,9 @@
 
 package biz.neustar.service.metrics.config;
 
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.stereotype.Component;
+
 @Component
 @ImportResource("classpath:properties-config.xml")
 public class AppConfig {
