@@ -52,7 +52,9 @@
     <exec executable="sloccount"           
         output="${reports.dir}/sloc/sloccount.sc"
         failonerror="false" failifexecutionfails="false">
-      <arg line="--wide --details ${src.dir}"/>
+      <arg value="--wide"/>
+      <arg value="--details"/>
+      <arg value="${src.dir}"/>
     </exec>
   </target>
 </project>
