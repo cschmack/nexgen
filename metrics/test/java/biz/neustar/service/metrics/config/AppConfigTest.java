@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:defaults/metrics-context.xml"})
-@DirtiesContext
 public class AppConfigTest {
 
     @Autowired
