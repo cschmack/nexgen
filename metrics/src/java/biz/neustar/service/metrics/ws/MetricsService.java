@@ -8,6 +8,9 @@
 
 package biz.neustar.service.metrics.ws;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MetricsService {
 
 }

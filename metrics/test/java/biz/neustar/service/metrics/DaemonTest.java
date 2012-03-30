@@ -10,6 +10,8 @@ package biz.neustar.service.metrics;
 
 import static org.junit.Assert.*;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 
 
@@ -21,8 +23,15 @@ public class DaemonTest {
         assertNotNull(daemon);
     }
     
-    @Test(expected=UnsupportedOperationException.class)
-    public void testStartup() {
-        Daemon.main(new String[] {});
+    @Test
+    public void testStartup() throws InterruptedException {
+        Daemon daemon = Daemon.createDeamon(new String[] {});
+        assertNotNull(daemon);
+        daemon.startAndWait();
+        
+        TimeUnit.SECONDS.sleep(1);
+        
+        daemon.stopAndWait();
+        assertFalse(daemon.isRunning());
     }
 }

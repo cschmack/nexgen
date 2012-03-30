@@ -93,7 +93,11 @@
   </target>
 
   <target name="test" depends="compile-tests" description="run unit and story tests">
-    <test-units/>
+    <test-units>
+      <junit-classpath>
+        <pathelement location="${basedir}/test"/>
+      </junit-classpath>
+    </test-units>
 <!--    
     <test-stories />
 -->

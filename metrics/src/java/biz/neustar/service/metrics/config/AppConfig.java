@@ -22,6 +22,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ import biz.neustar.service.metrics.cxf.SpringJaxrsServlet;
 import biz.neustar.service.metrics.ws.MetricsService;
 
 
-@Component
+@Configuration("metricsConfig")
 @ImportResource("classpath:defaults/properties-config.xml")
 public class AppConfig {
 
@@ -55,6 +56,7 @@ public class AppConfig {
         context.addServlet(servletHolder(), "/*"); // hand everything off to the CXF and let it map the paths
         context.addFilter(gzipFilter(), "/*", EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
         server.setHandler(context);
+        server.setStopAtShutdown(true);
         return server;
     }
     
@@ -71,7 +73,12 @@ public class AppConfig {
     @Bean
     public ServletHolder servletHolder() {
         ServletHolderFactory servletHolder = new ServletHolderFactory();
-        return servletHolder.getServletHolder(new SpringJaxrsServlet(),
+        return servletHolder.getServletHolder(springJaxrsServlet(),
                 MetricsService.class);
+    }
+    
+    @Bean
+    public SpringJaxrsServlet springJaxrsServlet() {
+        return new SpringJaxrsServlet();
     }
 }

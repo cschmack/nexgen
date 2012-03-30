@@ -46,8 +46,8 @@ public class Daemon extends AbstractExecutionThreadService {
         }
     }
     
-    public static void main(String[] args) {
-        // just setup some default stuff..
+    public static Daemon createDeamon(String[] args) {
+     // just setup some default stuff..
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         
         final Daemon daemon = new Daemon();
@@ -65,7 +65,12 @@ public class Daemon extends AbstractExecutionThreadService {
             }
         }));
         
+        return daemon;
+    }
+    
+    public static void main(String[] args) {
         LOGGER.info("starting metrics service...");
+        Daemon daemon = Daemon.createDeamon(args);
         daemon.startAndWait();
         daemon.waitWhileRunning();
         LOGGER.info("stopped metrics service...");
