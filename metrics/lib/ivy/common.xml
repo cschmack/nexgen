@@ -154,7 +154,10 @@
     value="${user.ivy.defaultCacheDir}"
     else="${proj.ivy.defaultCacheDir}">
    <not>
+     <or>
      <equals arg1="${env.USER}" arg2="hudson"></equals>
+     <equals arg1="${env.USER}" arg2="jenkins"></equals>
+     </or>
    </not>
   </condition>
   
