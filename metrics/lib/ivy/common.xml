@@ -140,7 +140,8 @@
   <property name="ivy.jar.dir" value="${basedir}/lib/ivy" />
 
   <path id="ivy.lib.path">
-    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    <!-- use the latest and greatest ivy -->
+    <fileset dir="${ivy.jar.dir}" includes="*.jar" excludes="ivy.jar"/>
   </path>
 
   <property name="user.ivy.defaultCacheDir"

@@ -17,10 +17,9 @@
       <ivy pattern="${nexus.url}/content/repositories/releases/[organisation]/[module]/[revision]/ivy.xml"/>
     </url>
     
-    <url name="mvn.central" m2compatible="true">
-      <artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-      <ivy pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/ivy.xml"/>
-    </url>
+    <ibiblio name="mvn.central" m2compatible="true" usepoms="true"
+      root="http://repo1.maven.org/maven2/"
+      pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
 
 
     <url name="spring" m2compatible="true">
