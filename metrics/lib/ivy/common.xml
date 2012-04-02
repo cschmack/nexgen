@@ -48,7 +48,7 @@
 
   <macrodef name="git-version">
     <sequential>
-      <condition property="env_ver" value="${env.VERSION}" else="${version}">
+      <condition property="env_ver" value="${env.VERSION}" else="0.0.0">
         <isset property="env.VERSION"/>
       </condition>
       <echo message="environment version is ${env_ver}"/>
@@ -58,7 +58,8 @@
         <arg line="rev-parse --short HEAD"/>
       </exec>
 
-      <script language="javascript"> <![CDATA[
+      <script language="javascript" classpathref="ivy.lib.path">
+        <![CDATA[
           importClass(java.lang.Integer);
           rev = project.getProperty("revision");
           revInt = Integer.valueOf(rev, 16);
