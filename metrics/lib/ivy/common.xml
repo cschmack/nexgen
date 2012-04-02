@@ -46,20 +46,16 @@
     </sequential>
   </macrodef>
 
-  <macrodef name="git-version">
-    <sequential>
-      <condition property="env_ver" value="${env.VERSION}" else="0.0.0">
-        <isset property="env.VERSION"/>
-      </condition>
-      <echo message="environment version is ${env_ver}"/>
-      <property name="major.version" value="${env_ver}"/>
-
+  <target name="-git-revision-tmp">
       <exec executable="git" outputproperty="revision">
         <arg line="rev-parse --short HEAD"/>
       </exec>
 
 <!-- rhino isnt working on ubuntu open-jdk7 https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/920214 -->
-      <script language="javascript" classpathref="ivy.lib.path">
+      <script language="javascript" manager="javax">
+<classpath>
+   <fileset dir="${basedir}/lib/ivy" includes="js.jar"/> 
+  </classpath>
         <![CDATA[
           importClass(java.lang.Integer);
           rev = project.getProperty("revision");
@@ -69,6 +65,20 @@
           echo.perform();
           project.setProperty("revision", revInt);
          ]]> </script>
+  </target>
+
+  <macrodef name="git-version">
+    <sequential>
+      <condition property="env_ver" value="${env.VERSION}" else="0.0.0">
+        <isset property="env.VERSION"/>
+      </condition>
+      <echo message="environment version is ${env_ver}"/>
+      <property name="major.version" value="${env_ver}"/>
+
+      <exec executable="bash" outputproperty="revision">
+        <arg value="-c"/>
+        <arg value="echo  $((0x`git rev-parse --short HEAD`))"/>
+      </exec>
 
       <echo>Revision found: ${revision}</echo>
       <property name="full.version" value="${major.version}.${revision}"/>
