@@ -9,6 +9,7 @@
 package biz.neustar.service.metrics.cxf;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  * Enhanced SpringJaxrsServlet to support spring based service
@@ -29,12 +32,26 @@ import org.springframework.stereotype.Component;
  *
  */
 
-@Component
 public class SpringJaxrsServlet extends CXFNonSpringJaxrsServlet {
 	private static final long serialVersionUID = 1L;
     
 	@Autowired
 	private ApplicationContext ac;
+	
+	private List<Object> providers = Lists.newArrayList();
+	
+	public void addProvider(Object provider) {
+	    providers.add(provider);
+	}
+	
+	@Override
+	protected List<?> getProviders(ServletConfig servletConfig) throws ServletException {
+	    List<Object> providers = Lists.newArrayList();
+	    // merge the provider lists
+	    providers.addAll(super.getProviders(servletConfig));
+	    providers.addAll(this.providers);
+	    return providers;
+	}
 	
 	@SuppressWarnings("rawtypes")
 	@Override

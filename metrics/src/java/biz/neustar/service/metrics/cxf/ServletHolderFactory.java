@@ -8,9 +8,18 @@
 
 package biz.neustar.service.metrics.cxf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
 import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 
 public class ServletHolderFactory {
@@ -40,20 +49,28 @@ public class ServletHolderFactory {
                 serviceClassNames.toString());
 
         // Register our providers
-        final String providers = ""; // TBD
+        final String providers = "";//JacksonJsonProvider.class.getName();
         if (!providers.isEmpty()) {
             holder.setInitParameter("jaxrs.providers", providers);
         }
         
-        final String inInterceptors = // could be more.. 
-                String.format("%s", GZIPInInterceptor.class.getName());
+        final String inInterceptors = 
+                createList(GZIPInInterceptor.class);
         
         holder.setInitParameter("jaxrs.inInterceptors", 
                 inInterceptors);
         
         holder.setInitParameter("jaxrs.outInterceptors",
-                GZIPOutInterceptor.class.getName());
+                createList(GZIPOutInterceptor.class));
         
         return holder;
+    }
+    
+    protected String createList(Class<?>...interceptors) {
+        List<String> names = Lists.newArrayList();
+        for (Class<?> interceptor : interceptors) {
+            names.add(interceptor.getName());
+        }
+        return Joiner.on(' ').join(names);
     }
 }

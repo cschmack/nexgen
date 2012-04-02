@@ -8,20 +8,47 @@
 
 package biz.neustar.service.metrics.ws;
 
+import java.util.List;
+
+import javax.validation.Validator;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import biz.neustar.service.metrics.ws.model.Metric;
+
 @Component
+@Path("/metrics/v1/")
 public class MetricsService {
+    private static final Logger LOGGER = 
+            LoggerFactory.getLogger(MetricsService.class);
+    
+    @Autowired
+    private Validator validator;
 
     @GET
-    @Path("/metrics/v1/hello")
+    @Path("/hello")
     @Produces({MediaType.TEXT_PLAIN})
     public String hello() {
         return "hello world!";
     }
+    
+    @POST
+    @Path("/metrics")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public void create(List<Metric> metrics) {
+        LOGGER.debug("Received: {}", metrics);
+        for (Metric metric : metrics) {
+            validator.validate(metric);
+        }
+    }
+    
 }

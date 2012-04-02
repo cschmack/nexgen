@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import javax.servlet.DispatcherType;
+import javax.validation.Validator;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -26,6 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
 import com.google.common.collect.Maps;
 
 import biz.neustar.service.metrics.cxf.ServletHolderFactory;
@@ -42,6 +45,12 @@ public class AppConfig {
     
     @Value("${app.serverMaxThreadPool}")
     private int serverMaxThreadPool;
+    
+    
+    @Bean
+    public Validator validator() {
+        return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+    }
     
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server getServer() {
@@ -79,6 +88,8 @@ public class AppConfig {
     
     @Bean
     public SpringJaxrsServlet springJaxrsServlet() {
-        return new SpringJaxrsServlet();
+        SpringJaxrsServlet servlet = new SpringJaxrsServlet();
+        servlet.addProvider(new JacksonJsonProvider());
+        return servlet;
     }
 }
