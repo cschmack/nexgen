@@ -58,6 +58,7 @@
         <arg line="rev-parse --short HEAD"/>
       </exec>
 
+<!-- rhino isnt working on ubuntu open-jdk7 https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/920214 -->
       <script language="javascript" classpathref="ivy.lib.path">
         <![CDATA[
           importClass(java.lang.Integer);
