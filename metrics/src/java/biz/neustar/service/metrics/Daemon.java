@@ -24,7 +24,7 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 public class Daemon extends AbstractExecutionThreadService {
     private static final Logger LOGGER = LoggerFactory.getLogger(Daemon.class);
     private ClassPathXmlApplicationContext appCtx;
-    private CountDownLatch stopLatch = new CountDownLatch(1);
+    private final CountDownLatch stopLatch = new CountDownLatch(1);
     
     @Override
     protected void run() throws Exception {
