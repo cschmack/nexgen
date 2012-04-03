@@ -67,6 +67,7 @@ public class MetricsServiceTest {
         metric.setService("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
         metric.setResource("http://www.foo.com");
         metric.setCustomer("windstream");
+        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
         // YYYY-MM-DDTHH:MM:SS.mmm
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         metric.setTimestamp(dateFormatter.format(new Date()));
@@ -76,4 +77,20 @@ public class MetricsServiceTest {
         Response resp = client.post(mapper.writeValueAsBytes(testData));
         assertEquals(204, resp.getStatus());
     }
+    
+    @Test
+    public void testInvalidCreation() throws JsonGenerationException, JsonMappingException, IOException {
+        WebClient client = WebClient.create(location)
+            .path("/metrics/v1/metrics")
+            .accept(MediaType.APPLICATION_JSON)
+            .type(MediaType.APPLICATION_JSON);
+
+        Metric metric = new Metric();        
+        List<Metric> testData = Lists.newArrayList(metric);
+        ObjectMapper mapper = new ObjectMapper();
+        Response resp = client.post(mapper.writeValueAsBytes(testData));
+        assertEquals(400, resp.getStatus());
+    }
+    
+    
 }

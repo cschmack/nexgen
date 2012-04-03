@@ -21,25 +21,26 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
-import com.google.common.collect.Maps;
 
 import biz.neustar.service.metrics.cxf.ServletHolderFactory;
 import biz.neustar.service.metrics.cxf.SpringJaxrsServlet;
 import biz.neustar.service.metrics.ws.MetricsService;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.google.common.collect.Maps;
+
 
 @Configuration("metricsConfig")
 @ImportResource("classpath:defaults/properties-config.xml")
 public class AppConfig {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppConfig.class);
+    
     @Value("${app.serverPort}")
     private int serverPort;
     
@@ -54,7 +55,7 @@ public class AppConfig {
     
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server getServer() {
-        
+        LOGGER.debug("initializing server");
         Server server = new Server(new InetSocketAddress(serverPort));
         server.setSendServerVersion(false);
         server.setThreadPool(new QueuedThreadPool(serverMaxThreadPool));

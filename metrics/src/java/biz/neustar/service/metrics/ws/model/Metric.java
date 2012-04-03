@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class Metric {
@@ -68,4 +69,18 @@ public class Metric {
     public void setValues(Map<String, String> values) {
         this.values = values;
     }
+   
+    public String toString() {
+        return Objects.toStringHelper(this)
+            .add("timestamp", timestamp)
+            .add("service", service)
+            .add("customer", customer)
+            .add("resource", resource)
+            .add("values", values)
+            .toString();
+    }
+    /*
+    protected String mapToString() {
+        return 
+    }*/
 }
