@@ -33,7 +33,6 @@ public class Metric {
     private Map<String, String> values = Maps.newHashMap();
 
     
-    
     public String getTimestamp() {
         return timestamp;
     }

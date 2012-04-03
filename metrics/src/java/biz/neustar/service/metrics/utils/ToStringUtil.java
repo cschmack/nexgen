@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-public class ToStringUtil {
+public final class ToStringUtil {
     private ToStringUtil() {}
 
     public static String mapToString(Map<String, ?> map) {
