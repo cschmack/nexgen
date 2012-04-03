@@ -82,9 +82,15 @@ public class Daemon extends AbstractExecutionThreadService {
         return daemon;
     }
     
+    private static volatile Daemon mainDaemon = null;
+    static Daemon getMainDaemon() {
+        return mainDaemon;
+    }
+    
     public static void main(String[] args) {
         LOGGER.info("starting metrics service...");
         Daemon daemon = Daemon.createDeamon(args);
+        mainDaemon = daemon; // for testing purposes.
         State state = daemon.startAndWait();
         Preconditions.checkState(State.RUNNING == state);
         // park..

@@ -15,6 +15,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 public class ToStringUtil {
+    private ToStringUtil() {}
 
     public static String mapToString(Map<String, ?> map) {
         if (map == null) {
