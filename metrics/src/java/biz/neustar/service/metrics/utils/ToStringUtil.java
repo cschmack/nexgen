@@ -23,11 +23,10 @@ public final class ToStringUtil {
         }
         
         ToStringHelper toStrHelper = Objects.toStringHelper(Map.class);
-        if (map != null) {
-            for (Entry<String, ?> entry : map.entrySet()) {
-                toStrHelper.add(entry.getKey(), entry.getValue());
-            }
+        for (Entry<String, ?> entry : map.entrySet()) {
+            toStrHelper.add(entry.getKey(), entry.getValue());
         }
+
         return toStrHelper.toString();
     }
 }
