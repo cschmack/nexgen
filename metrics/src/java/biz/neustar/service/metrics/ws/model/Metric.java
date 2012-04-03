@@ -9,10 +9,14 @@
 package biz.neustar.service.metrics.ws.model;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import biz.neustar.service.metrics.utils.ToStringUtil;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Maps;
 
 public class Metric {
@@ -76,11 +80,7 @@ public class Metric {
             .add("service", service)
             .add("customer", customer)
             .add("resource", resource)
-            .add("values", values)
+            .add("values", ToStringUtil.mapToString(values))
             .toString();
     }
-    /*
-    protected String mapToString() {
-        return 
-    }*/
 }

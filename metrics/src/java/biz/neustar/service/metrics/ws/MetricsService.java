@@ -52,6 +52,9 @@ public class MetricsService {
         LOGGER.debug("Received: {}", metrics);
         
         validateIteratable(metrics);
+        for (Metric metric : metrics) {
+            LOGGER.debug("Metric Received: {}", metric);
+        }
     }
     
     protected <T> void validateIteratable(Iterable<T> iterable) {
