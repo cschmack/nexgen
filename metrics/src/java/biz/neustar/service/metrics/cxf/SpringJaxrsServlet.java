@@ -38,7 +38,7 @@ public class SpringJaxrsServlet extends CXFNonSpringJaxrsServlet {
 	@Autowired
 	private ApplicationContext ac;
 	
-	private List<Object> providers = Lists.newArrayList();
+	private final List<Object> providers = Lists.newArrayList();
 	
 	public void addProvider(Object provider) {
 	    providers.add(provider);
