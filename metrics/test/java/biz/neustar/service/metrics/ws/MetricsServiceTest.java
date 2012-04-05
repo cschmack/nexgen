@@ -30,6 +30,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -92,5 +93,35 @@ public class MetricsServiceTest {
         assertEquals(400, resp.getStatus());
     }
     
+    @Test
+    public void testConfigCreation() throws JsonGenerationException, JsonMappingException, IOException {
+        WebClient client = WebClient.create(location)
+            .path("/metrics/v1/config")
+            .accept(MediaType.APPLICATION_JSON)
+            .type(MediaType.APPLICATION_JSON);
+
+        ContextConfig contextConfig = new ContextConfig();
+        contextConfig.setName("default");
+        contextConfig.getContexts().add("doppler");
+        contextConfig.getContexts().add("radar");
+        
+        ObjectMapper mapper = new ObjectMapper();
+        Response resp = client.post(mapper.writeValueAsBytes(contextConfig));
+        assertEquals(204, resp.getStatus());
+    }
     
+    @Test
+    public void testInvalidConfigCreation() throws JsonGenerationException, JsonMappingException, IOException {
+        WebClient client = WebClient.create(location)
+            .path("/metrics/v1/config")
+            .accept(MediaType.APPLICATION_JSON)
+            .type(MediaType.APPLICATION_JSON);
+
+        ContextConfig contextConfig = new ContextConfig();
+        //contextConfig.setName("");
+        ObjectMapper mapper = new ObjectMapper();
+        Response resp = client.post(mapper.writeValueAsBytes(contextConfig));
+        assertEquals(400, resp.getStatus());
+    }
+ 
 }

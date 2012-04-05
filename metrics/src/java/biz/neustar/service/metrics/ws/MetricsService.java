@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
 
 @Component
@@ -55,6 +56,28 @@ public class MetricsService {
         for (Metric metric : metrics) {
             LOGGER.debug("Metric Received: {}", metric);
         }
+    }
+    
+    @POST
+    @Path("/config")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public void createConfig(ContextConfig contextConfig) {
+        LOGGER.debug("Received: {}", contextConfig);
+        validateItem(contextConfig);
+        LOGGER.debug("Validated {}", contextConfig);
+
+    }
+    
+    protected <T> void validateItem(T item) {
+        Set<ConstraintViolation<T>> violations = validator.validate(item);
+        if (!violations.isEmpty()) {
+            // log the violations
+            for (ConstraintViolation<T> violation : violations) {
+               LOGGER.info("constraint violation: {}", violation); 
+            }
+            // at the end or here..
+            throw new WebApplicationException(Status.BAD_REQUEST);
+        }        
     }
     
     protected <T> void validateIteratable(Iterable<T> iterable) {
