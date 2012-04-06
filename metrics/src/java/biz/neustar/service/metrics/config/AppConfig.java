@@ -13,7 +13,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import javax.servlet.DispatcherType;
-import javax.validation.Validator;
+
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.validation.Validator;
 
 import biz.neustar.service.metrics.cxf.ServletHolderFactory;
 import biz.neustar.service.metrics.cxf.SpringJaxrsServlet;
@@ -50,7 +51,7 @@ public class AppConfig {
     
     @Bean
     public Validator validator() {
-        return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+    	return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
     }
     
     @Bean(initMethod = "start", destroyMethod = "stop")
