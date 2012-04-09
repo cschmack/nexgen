@@ -103,6 +103,7 @@ public class MetricsServiceTest {
 
         ContextConfig contextConfig = new ContextConfig();
         contextConfig.setName("default");
+        contextConfig.setDescription("default context");
         contextConfig.getContexts().add("doppler");
         contextConfig.getContexts().add("radar");
         

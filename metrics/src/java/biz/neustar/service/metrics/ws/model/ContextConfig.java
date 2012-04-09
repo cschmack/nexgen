@@ -12,6 +12,8 @@ public class ContextConfig {
     @NotBlank
 	private String name;
     
+    private String description;
+    
 	private Set<String> contexts = Sets.newHashSet();
 
 	public String getName() {
@@ -20,6 +22,14 @@ public class ContextConfig {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Set<String> getContexts() {
