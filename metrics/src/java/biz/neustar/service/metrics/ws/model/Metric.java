@@ -25,13 +25,17 @@ public class Metric {
     private String timestamp;
     
     @NotBlank
-    private String service;
+    private String from;
     
-    private String customer; 
+    @NotBlank
+    private String host;
+    
+    private String requestor; 
     private String resource;
     
     private Map<String, String> values = Maps.newHashMap();
 
+    
     
     public String getTimestamp() {
         return timestamp;
@@ -41,20 +45,28 @@ public class Metric {
         this.timestamp = timestamp;
     }
 
-    public String getService() {
-        return service;
+    public String getFrom() {
+        return from;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setFrom(String from) {
+        this.from = from;
+    }
+    
+    public String getHost() {
+        return host;
     }
 
-    public String getCustomer() {
-        return customer;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public String getRequestor() {
+        return requestor;
+    }
+
+    public void setRequestor(String requestor) {
+        this.requestor = requestor;
     }
 
     public String getResource() {
@@ -76,8 +88,9 @@ public class Metric {
     public String toString() {
         return Objects.toStringHelper(this)
             .add("timestamp", timestamp)
-            .add("service", service)
-            .add("customer", customer)
+            .add("from", from)
+            .add("host", host)
+            .add("requestor", requestor)
             .add("resource", resource)
             .add("values", ToStringUtil.mapToString(values))
             .toString();

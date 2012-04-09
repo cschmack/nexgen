@@ -65,9 +65,10 @@ public class MetricsServiceTest {
             .type(MediaType.APPLICATION_JSON);
 
         Metric metric = new Metric();
-        metric.setService("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
+        metric.setFrom("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
+        metric.setHost("stulhdesec3.ultra.neustar.com");
         metric.setResource("http://www.foo.com");
-        metric.setCustomer("windstream");
+        metric.setRequestor("windstream");
         metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
         // YYYY-MM-DDTHH:MM:SS.mmm
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
