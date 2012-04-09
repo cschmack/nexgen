@@ -8,6 +8,15 @@ import org.springframework.validation.Validator;
 
 public class MetricValidator implements Validator {
 
+    private static final MetricValidator INSTANCE = 
+            new MetricValidator();
+    
+    private MetricValidator() {}
+    
+    public static MetricValidator getDefaultInstance() {
+        return INSTANCE;
+    }
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Metric.class.equals(clazz);
@@ -17,7 +26,8 @@ public class MetricValidator implements Validator {
 	public void validate(Object obj, Errors e) {
 		Metric metric = (Metric)obj;
 
-		ValidationUtils.rejectIfEmptyOrWhitespace(e, "service", "service.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(e, "from", "from.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(e, "host", "host.empty");
 		
 		if ((metric.getTimestamp() == null) || (metric.getTimestamp().trim().length() == 0)) {
 			e.rejectValue("timestamp", "timestamp.blank", "timestamp required");

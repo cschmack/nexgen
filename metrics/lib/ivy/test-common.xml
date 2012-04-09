@@ -71,7 +71,6 @@
                         
         <structure name="${ant.project.name}">
           <classfiles>
-            <fileset dir="${test.build.dir}/"/>
             <fileset dir="${build.dir}/"/>
           </classfiles>
           <sourcefiles encoding="UTF-8">

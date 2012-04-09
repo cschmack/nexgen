@@ -5,7 +5,16 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 public class ContextConfigValidator implements Validator {
-
+    
+    private static final ContextConfigValidator INSTANCE = 
+            new ContextConfigValidator();
+    
+    private ContextConfigValidator() {}
+    
+    public static ContextConfigValidator getDefaultInstance() {
+        return INSTANCE;
+    }
+    
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return ContextConfig.class.equals(clazz);

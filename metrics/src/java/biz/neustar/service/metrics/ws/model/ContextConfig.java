@@ -9,11 +9,8 @@ import com.google.common.collect.Sets;
 
 public class ContextConfig {
 
-    @NotBlank
-	private String name;
-    
+	private String name;    
     private String description;
-    
 	private Set<String> contexts = Sets.newHashSet();
 
 	public String getName() {

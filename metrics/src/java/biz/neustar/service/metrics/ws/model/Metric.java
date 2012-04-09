@@ -10,29 +10,17 @@ package biz.neustar.service.metrics.ws.model;
 
 import java.util.Map;
 
-import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import biz.neustar.service.metrics.utils.ToStringUtil;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class Metric {
-	// "2012-04-04T12:33:59.173"
-    @Pattern(regexp = "(19|20)\\d\\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\\.\\d\\d\\d")
-    private String timestamp;
-    
-    @NotBlank
-    private String from;
-    
-    @NotBlank
-    private String host;
-    
+    private String timestamp;   // required
+    private String from;        // required
+    private String host;        // required
     private String requestor; 
-    private String resource;
-    
+    private String resource;    
     private Map<String, String> values = Maps.newHashMap();
 
     
