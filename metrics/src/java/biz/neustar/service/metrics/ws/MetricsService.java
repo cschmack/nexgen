@@ -9,6 +9,8 @@
 package biz.neustar.service.metrics.ws;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,23 +24,27 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
+import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricValidator;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 @Component
 @Path("/metrics/v1/")
-public class MetricsService {
+public class MetricsService implements ContextProvider {
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(MetricsService.class);
+    
+    private Map<String, ContextConfig> contextMap = Maps.newHashMap();
     
     @GET
     @Path("/hello")
@@ -53,7 +59,7 @@ public class MetricsService {
     public void create(List<Metric> metrics) {
         LOGGER.debug("Received: {}", metrics);
         
-        validateIteratable(metrics, new MetricValidator(), "metric");
+        validateIteratable(metrics, new MetricValidator(this), "metric");
         for (Metric metric : metrics) {
             LOGGER.debug("Metric Received: {}", metric);
         }
@@ -66,35 +72,13 @@ public class MetricsService {
         LOGGER.debug("Received: {}", contextConfig);
         validateItem(contextConfig, new ContextConfigValidator(), "ContextConfig");
         LOGGER.debug("Validated {}", contextConfig);
+        
+        contextMap.put(contextConfig.getName(), contextConfig);
+        LOGGER.debug("added Context config {}", contextConfig.getName());
 
     }
     
-//    protected <T> void validateItem(T item) {
-//        Set<ConstraintViolation<T>> violations = validator.validate(item);
-//        if (!violations.isEmpty()) {
-//            // log the violations
-//            for (ConstraintViolation<T> violation : violations) {
-//               LOGGER.info("constraint violation: {}", violation); 
-//            }
-//            // at the end or here..
-//            throw new WebApplicationException(Status.BAD_REQUEST);
-//        }        
-//    }
-//    
-//    protected <T> void validateIteratable(Iterable<T> iterable) {
-//        for (T item : iterable) {
-//            Set<ConstraintViolation<T>> violations = validator.validate(item);
-//            if (!violations.isEmpty()) {
-//                // log the violations
-//                for (ConstraintViolation<T> violation : violations) {
-//                   LOGGER.info("constraint violation: {}", violation); 
-//                }
-//                // at the end or here..
-//                throw new WebApplicationException(Status.BAD_REQUEST);
-//            }
-//        }
-//    }
-//    
+ 
     protected <T> void validateItem(T item, Validator validator, String name) {
 //    	Errors result = new BeanPropertyBindingResult(item, name);
 //    	ValidationUtils.invokeValidator(validator, item, result);
@@ -117,5 +101,18 @@ public class MetricsService {
         	validateItem(item, validator, name);
         }
     }
+
+	@Override
+	public Set<String> getContexts(String service) {
+		Set<String> contexts;
+		// TODO find the greatest match of service name from the stored contexts
+		if (contextMap.containsKey(service)) {
+			contexts = contextMap.get(service).getContexts();
+		} else {
+			contexts = Sets.newHashSet(); // empty
+		}
+		
+		return contexts;
+	}
     
 }
