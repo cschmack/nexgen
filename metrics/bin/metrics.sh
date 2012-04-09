@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # metrics
 # OPTIONS:
@@ -91,7 +91,7 @@ args=`getopt fahp:bD: "$@"`
 eval set -- "$args"
 
 ## you probably need to fix this ..
-classname="biz.neustar.service.metricsDaemon"
+classname="biz.neustar.service.metrics.Daemon"
 
 while true; do
     case "$1" in

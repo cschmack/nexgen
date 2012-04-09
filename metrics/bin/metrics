@@ -8,42 +8,57 @@
 # description: Starts and stops App
 # pidfile: /var/run/@proj_name@/@proj_name@.pid
 
-. /etc/rc.d/init.d/functions
+. /lib/lsb/init-functions
 
-export JAVA_HOME=/usr/java/default
+#export JAVA_HOME=/usr/java/default
 export APP_NAME=metrics
 export APP_HOME=/usr/local/share/$APP_NAME
 export APP_OWNR=$APP_NAME
-LOG_FILE=/var/log/$APP_NAME/$APP_NAME.log
+LOG_DIR=/var/log/$APP_NAME
+LOG_FILE=$LOG_DIR/$APP_NAME.log
 LOCK_FILE=/var/lock/subsys/$APP_NAME
-PID_FILE=/var/run/$APP_NAME/$APP_NAME.pid
-APP_EXEC=/usr/local/sbin/$APP_NAME.sh
+PID_DIR=/var/run/$APP_NAME
+PID_FILE=$PID_DIR/$APP_NAME.pid
+APP_EXEC=$APP_HOME/bin/$APP_NAME.sh
 
 RETVAL=0
 
+if [ `id -u` -ne 0 ]; then
+    echo "The $APP_NAME init script can only be run as root"
+    exit 1
+fi
+
+create_dir() {
+  if [ ! -d  $1 ]; then
+    mkdir -p $1
+    chown $APP_NAME:$APP_NAME $1
+  fi
+}
+
 start() {
-  echo -n $"Starting $APP_NAME: "
+  log_daemon_msg "Starting Nexgen Service" "$APP_NAME"
+  create_dir $LOG_DIR
+  create_dir $PID_DIR
   su $APP_OWNR -c "$APP_EXEC -p $PID_FILE " > $LOG_FILE 2>&1
   RETVAL=$?
   if [ $RETVAL -eq 0 ]; then
-    success $"$APP_NAME startup"
+    log_success_msg "$APP_NAME started"
     touch $LOCK_FILE
     echo
   else
-    failure $"$APP_NAME startup"
+    log_failure_msg "$APP_NAME start failed"
     RETVAL=1; exit $RETVAL;
   fi
 }
 
 stop() {
-  echo -n $"Shutting down $APP_NAME: "
+  log_daemon_msg "Shutting down Nexgen Service" "$APP_NAME"
   killproc -p $PID_FILE $APP_NAME
   if [ $RETVAL -eq 0 ]; then
-    success $"$APP_NAME shutdown"
-    echo
+    log_success_msg "$APP_NAME shutdown"
     rm $LOCK_FILE
   else
-    failure $"$APP_NAME shutdown"
+    log_failure_msg "$APP_NAME shutdown"
     echo  
     RETVAL=1; exit $RETVAL
   fi
