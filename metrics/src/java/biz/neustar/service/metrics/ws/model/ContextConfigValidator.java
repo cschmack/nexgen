@@ -4,7 +4,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-public class ContextConfigValidator implements Validator {
+public final class ContextConfigValidator implements Validator {
     
     private static final ContextConfigValidator INSTANCE = 
             new ContextConfigValidator();

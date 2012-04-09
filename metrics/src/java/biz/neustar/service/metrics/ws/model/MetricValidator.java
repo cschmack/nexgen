@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-public class MetricValidator implements Validator {
+public final class MetricValidator implements Validator {
 
     private static final MetricValidator INSTANCE = 
             new MetricValidator();
