@@ -9,41 +9,43 @@
 package biz.neustar.service.metrics.ws;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.DataBinder;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import biz.neustar.service.metrics.utils.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
+import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricValidator;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 @Component
 @Path("/metrics/v1/")
-public class MetricsService {
+public class MetricsService implements ContextProvider {
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(MetricsService.class);
     
+
     @Autowired
     private ValidationUtil validationUtil;
+
+    private Map<String, ContextConfig> contextMap = Maps.newHashMap();
+
     
     @GET
     @Path("/hello")
@@ -58,8 +60,8 @@ public class MetricsService {
     public void create(List<Metric> metrics) {
         LOGGER.debug("Received: {}", metrics);
         
-        validationUtil.validate(metrics, 
-                MetricValidator.getDefaultInstance());
+        validationUtil.validate(metrics, new MetricValidator(this));
+
         for (Metric metric : metrics) {
             LOGGER.debug("Metric Received: {}", metric);
         }
@@ -73,7 +75,23 @@ public class MetricsService {
         validationUtil.validate(contextConfig, 
                 ContextConfigValidator.getDefaultInstance());
         LOGGER.debug("Validated {}", contextConfig);
+        
+        contextMap.put(contextConfig.getName(), contextConfig);
+        LOGGER.debug("added Context config {}", contextConfig.getName());
 
     }
     
+	@Override
+	public Set<String> getContexts(String service) {
+		Set<String> contexts;
+		// TODO find the greatest match of service name from the stored contexts
+		if (contextMap.containsKey(service)) {
+			contexts = contextMap.get(service).getContexts();
+		} else {
+			contexts = Sets.newHashSet(); // empty
+		}
+		
+		return contexts;
+	}
+
 }

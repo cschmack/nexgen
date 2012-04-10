@@ -25,10 +25,6 @@ public final class ContextConfigValidator implements Validator {
 		//ContextConfig contextConfig = (ContextConfig)obj;
 		
 		ValidationUtils.rejectIfEmpty(e, "name", "name.empty");
-		//ValidationUtils.rejectIfEmptyOrWhitespace(e, "description", "description.empty");
-//		if ((contextConfig.getDescription() == null) || (contextConfig.getDescription().trim().length() == 0) ) {
-//			e.rejectValue("description", "description.required", "description field is missing");
-//		}
 	}
 
 }
