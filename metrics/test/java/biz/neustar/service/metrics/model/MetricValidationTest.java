@@ -47,7 +47,7 @@ public class MetricValidationTest {
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 12.123456789012);
         
         Calendar c = GregorianCalendar.getInstance();
         c.setTime(new Date());
@@ -65,7 +65,7 @@ public class MetricValidationTest {
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 1.0);
         
         Calendar c = GregorianCalendar.getInstance();
         c.setTime(new Date());
@@ -83,15 +83,13 @@ public class MetricValidationTest {
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 1.2);
         metric.set("foo", (Object)"nothing");
         
         Calendar c = GregorianCalendar.getInstance();
         c.setTime(new Date());
         metric.setTimestamp(DatatypeConverter.printDateTime(c));
-        
-        
-        
+                
         ContextProvider contextProvider = new ContextProvider() {
 			
 			@Override
@@ -119,7 +117,7 @@ public class MetricValidationTest {
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 15.0);
         metric.set("goo", (Object)"nothing");
         
         Calendar c = GregorianCalendar.getInstance();
@@ -155,7 +153,7 @@ public class MetricValidationTest {
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 1.2321);
         metric.set("goo", (Object)"nothing");
         
         Calendar c = GregorianCalendar.getInstance();

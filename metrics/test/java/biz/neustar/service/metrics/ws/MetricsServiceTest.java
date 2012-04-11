@@ -69,7 +69,7 @@ public class MetricsServiceTest {
         metric.setHost("stulhdesec3.ultra.neustar.com");
         metric.setResource("http://www.foo.com");
         metric.setRequestor("windstream");
-        metric.getValues().put("method", new Throwable().getStackTrace()[0].getMethodName());
+        metric.getValues().put("calls", 1.1234567890123);
         // YYYY-MM-DDTHH:MM:SS.mmm
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         metric.setTimestamp(dateFormatter.format(new Date()));
@@ -79,6 +79,33 @@ public class MetricsServiceTest {
         Response resp = client.post(mapper.writeValueAsBytes(testData));
         assertEquals(204, resp.getStatus());
     }
+    
+    @Test
+    public void testInvalidMetricValue() throws Exception {
+        WebClient client = WebClient.create(location)
+            .path("/metrics/v1/metrics")
+            .accept(MediaType.APPLICATION_JSON)
+            .type(MediaType.APPLICATION_JSON);
+
+        Metric metric = new Metric();
+        metric.setFrom("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
+        metric.setHost("stulhdesec3.ultra.neustar.com");
+        metric.setResource("http://www.foo.com");
+        metric.setRequestor("windstream");
+        metric.getValues().put("calls", 9.9);
+        // YYYY-MM-DDTHH:MM:SS.mmm
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        metric.setTimestamp(dateFormatter.format(new Date()));
+        
+        List<Metric> testData = Lists.newArrayList(metric);
+        ObjectMapper mapper = new ObjectMapper();
+        // manually manipulate the json to put in a string value
+        String json = mapper.writeValueAsString(testData).replace("9.9", "\"invalid\"");
+        
+        Response resp = client.post(json.getBytes());
+        assertEquals(400, resp.getStatus());
+    }
+    
     
     @Test
     public void testInvalidCreation() throws JsonGenerationException, JsonMappingException, IOException {

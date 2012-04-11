@@ -25,7 +25,7 @@ public class Metric {
     private String host;        // required
     private String requestor; 
     private String resource;    
-    private Map<String, String> values = Maps.newHashMap();
+    private Map<String, Double> values = Maps.newHashMap();
 
     @JsonIgnore
     private Map<String, Object> other = Maps.newHashMap();
@@ -70,11 +70,11 @@ public class Metric {
         this.resource = resource;
     }
 
-    public Map<String, String> getValues() {
+    public Map<String, Double> getValues() {
         return values;
     }
 
-    public void setValues(Map<String, String> values) {
+    public void setValues(Map<String, Double> values) {
         this.values = values;
     }
     

@@ -41,8 +41,6 @@ public class MetricValidator implements Validator {
 				e.rejectValue("timestamp", "timestamp.parsedFailed", "timestamp parse failure");
 			}
 		}
-<<<<<<< HEAD
-=======
 		
 		Map<String, Object> any = metric.any();
 		// check for extra 
@@ -60,7 +58,5 @@ public class MetricValidator implements Validator {
 				}
 			}
 		}
->>>>>>> 3fe63e68b4ac50403ab4cc95f4425a608576261f
 	}
-
 }

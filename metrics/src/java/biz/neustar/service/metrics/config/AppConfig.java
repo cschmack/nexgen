@@ -34,6 +34,8 @@ import biz.neustar.service.metrics.cxf.SpringJaxrsServlet;
 import biz.neustar.service.metrics.ws.MetricsService;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper;
+import com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper;
 import com.google.common.collect.Maps;
 
 
@@ -91,7 +93,10 @@ public class AppConfig {
     @Bean
     public SpringJaxrsServlet springJaxrsServlet() {
         SpringJaxrsServlet servlet = new SpringJaxrsServlet();
+        // add the jackson json providers
         servlet.addProvider(new JacksonJsonProvider());
+        servlet.addProvider(new JsonMappingExceptionMapper());
+        servlet.addProvider(new JsonParseExceptionMapper());
         return servlet;
     }
 }
