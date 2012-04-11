@@ -39,7 +39,6 @@ public final class MetricValidator implements Validator {
 				e.rejectValue("timestamp", "timestamp.parsedFailed", "timestamp parse failure");
 			}
 		}
-
 	}
 
 }

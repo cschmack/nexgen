@@ -15,20 +15,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.DataBinder;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 import biz.neustar.service.metrics.utils.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
