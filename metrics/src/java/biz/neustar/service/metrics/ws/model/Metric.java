@@ -12,10 +12,14 @@ import java.util.Map;
 
 import biz.neustar.service.metrics.utils.ToStringUtil;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class Metric {
+
     private String timestamp;   // required
     private String from;        // required
     private String host;        // required
@@ -23,7 +27,8 @@ public class Metric {
     private String resource;    
     private Map<String, String> values = Maps.newHashMap();
 
-    
+    @JsonIgnore
+    private Map<String, Object> other = Maps.newHashMap();
     
     public String getTimestamp() {
         return timestamp;
@@ -71,6 +76,16 @@ public class Metric {
 
     public void setValues(Map<String, String> values) {
         this.values = values;
+    }
+    
+    @JsonAnyGetter
+    public Map<String,Object> any() {
+    	return other;
+    }
+    
+    @JsonAnySetter
+    public void set(String name, Object value) {
+    	other.put(name, value);
     }
    
     public String toString() {

@@ -2,8 +2,6 @@ package biz.neustar.service.metrics.ws.model;
 
 import java.util.Set;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
@@ -40,6 +38,7 @@ public class ContextConfig {
     public String toString() {
         return Objects.toStringHelper(this)
             .add("name", name)
+            .add("description", description)
             .add("values", contexts.toString())
             .toString();
     }	
