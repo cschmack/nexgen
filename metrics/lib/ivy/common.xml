@@ -28,6 +28,7 @@
            author="true"
            version="true"
            use="true"
+           useexternalfile="true"
            classpathref="compile.classpath"
            windowtitle="${ant.project.name} API">
       <fileset dir="${src.dir}" defaultexcludes="yes">

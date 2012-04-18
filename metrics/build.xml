@@ -29,7 +29,7 @@
   <import file="${basedir}/lib/ivy/common.xml" />
 
   <path id="compile.classpath">
-    <fileset dir="${lib.dir}/compile" includes="*.jar"/>
+    <fileset dir="${lib.dir}/compile" includes="*.jar" excludes="*-sources.jar"/>
   </path>
 
   <path id="test.classpath">
