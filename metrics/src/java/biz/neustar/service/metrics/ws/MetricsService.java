@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 @Component
 @Path("/metrics/v1/")
-public class MetricsService implements ContextProvider {
+public class MetricsService {
     private static final Logger LOGGER = 
             LoggerFactory.getLogger(MetricsService.class);
     
@@ -44,8 +44,8 @@ public class MetricsService implements ContextProvider {
     @Autowired
     private ValidationUtil validationUtil;
 
-    private Map<String, ContextConfig> contextMap = Maps.newHashMap();
-
+    @Autowired // should be like a DAO or something
+    private ContextProvider contextProvider;
     
     @GET
     @Path("/hello")
@@ -60,7 +60,8 @@ public class MetricsService implements ContextProvider {
     public void create(List<Metric> metrics) {
         LOGGER.debug("Received: {}", metrics);
         
-        validationUtil.validate(metrics, new MetricValidator(this));
+        validationUtil.validate(metrics, 
+                new MetricValidator(contextProvider));
 
         for (Metric metric : metrics) {
             LOGGER.debug("Metric Received: {}", metric);
@@ -76,22 +77,9 @@ public class MetricsService implements ContextProvider {
                 ContextConfigValidator.getDefaultInstance());
         LOGGER.debug("Validated {}", contextConfig);
         
-        contextMap.put(contextConfig.getName(), contextConfig);
+        contextProvider.setContexts(contextConfig);
         LOGGER.debug("added Context config {}", contextConfig.getName());
 
     }
     
-	@Override
-	public Set<String> getContexts(String service) {
-		Set<String> contexts;
-		// TODO find the greatest match of service name from the stored contexts
-		if (contextMap.containsKey(service)) {
-			contexts = contextMap.get(service).getContexts();
-		} else {
-			contexts = Sets.newHashSet(); // empty
-		}
-		
-		return contexts;
-	}
-
 }
