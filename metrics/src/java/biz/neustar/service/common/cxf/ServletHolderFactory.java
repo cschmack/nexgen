@@ -6,18 +6,14 @@
  * of their respective owners.
  */
 
-package biz.neustar.service.metrics.cxf;
+package biz.neustar.service.common.cxf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
 import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 

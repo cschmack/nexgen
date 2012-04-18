@@ -8,12 +8,13 @@
 
 package biz.neustar.service.metrics.config;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.DispatcherType;
-
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -23,24 +24,39 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySources;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
+import org.springframework.jmx.support.MBeanServerFactoryBean;
 import org.springframework.validation.Validator;
 
-import biz.neustar.service.metrics.cxf.ServletHolderFactory;
-import biz.neustar.service.metrics.cxf.SpringJaxrsServlet;
+import biz.neustar.service.common.cxf.ServletHolderFactory;
+import biz.neustar.service.common.cxf.SpringJaxrsServlet;
 import biz.neustar.service.metrics.ws.MetricsService;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper;
 import com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+//This 'should' work according to the docs, however it only works if the configEnv properties file is 1st
+//@PropertySource({"classpath:defaults/app.properties","classpath:${configEnv:defaults}/app.properties"})
+/////
 
 @Configuration("metricsConfig")
-@ImportResource("classpath:defaults/properties-config.xml")
+@PropertySource({"classpath:defaults/app.properties"}) // by convention this is the default
+@ComponentScan("biz.neustar.service")
 public class AppConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConfig.class);
     
@@ -51,9 +67,84 @@ public class AppConfig {
     private int serverMaxThreadPool;
     
     
+    public int getServerPort() {
+        return serverPort;
+    }
+    
     @Bean
     public Validator validator() {
     	return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+    }
+    
+    @Bean
+    public static PropertySources reorderPropertySources(StandardEnvironment env) {
+        MutablePropertySources sources = env.getPropertySources();        
+        // Now we're going to mess with the order of the property sources a bit
+        // any ResourcePropertySources should be first and then any configEnv specific 
+        // versions should be before them
+        MutablePropertySources orderedSources = new MutablePropertySources();
+        org.springframework.core.env.PropertySource<?> firstNonRes = null;
+        Iterator<org.springframework.core.env.PropertySource<?>> iter = null;
+        // TODO: in-place reordering..
+        for (iter = sources.iterator(); iter.hasNext(); ) {
+            org.springframework.core.env.PropertySource<?> source = iter.next();
+            final boolean isResSrc = 
+                    ResourcePropertySource.class.isAssignableFrom(source.getClass());
+            if (isResSrc && firstNonRes != null) {
+                orderedSources.addBefore(firstNonRes.getName(), source);
+            } else {
+                if (!isResSrc && firstNonRes == null) {
+                    firstNonRes = source;
+                }
+                orderedSources.addLast(source);
+            }
+        }
+        
+        String configEnv = env.getProperty("configEnv");
+        if (!Strings.isNullOrEmpty(configEnv)) {
+            try {
+                orderedSources.addFirst(new ResourcePropertySource("classpath:"+ configEnv + "/app.properties"));
+            } catch (IOException ex) {
+                // actually going to just log & ignore
+                LOGGER.error("Environment Specific config not found for: {}", configEnv);
+            }
+        }
+        
+        return orderedSources;
+    }
+    
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer pspc(StandardEnvironment env) {
+        PropertySourcesPlaceholderConfigurer propertyConfigurer = new PropertySourcesPlaceholderConfigurer();
+        
+        propertyConfigurer.setPropertySources(reorderPropertySources(env));
+        return propertyConfigurer;
+    }
+    
+    
+    /* maybe?
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        PlatformTransactionManager transMgr = new xxxx
+        return transMgr;
+    }
+    */
+    
+    @Bean
+    public MBeanServerFactoryBean mbeanServer() {
+        MBeanServerFactoryBean mbeanFactory = new MBeanServerFactoryBean();
+        mbeanFactory.setLocateExistingServerIfPossible(true);
+        return mbeanFactory;
+    }
+    
+    @Bean
+    public MBeanExporter mbeanExporter() {
+        return new AnnotationMBeanExporter();
+    }
+    
+    @Bean
+    public AnnotationAwareAspectJAutoProxyCreator aspectJAutoProxy() {
+        return new AnnotationAwareAspectJAutoProxyCreator();
     }
     
     @Bean(initMethod = "start", destroyMethod = "stop")

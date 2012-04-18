@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.base.Preconditions;
@@ -23,12 +24,15 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 
 public class Daemon extends AbstractExecutionThreadService {
     private static final Logger LOGGER = LoggerFactory.getLogger(Daemon.class);
-    private ClassPathXmlApplicationContext appCtx;
+    private AnnotationConfigApplicationContext appCtx;
     private final CountDownLatch stopLatch = new CountDownLatch(1);
     
     @Override
     protected void run() throws Exception {
-        appCtx = new ClassPathXmlApplicationContext("defaults/metrics-context.xml");
+        //appCtx = new ClassPathXmlApplicationContext("defaults/metrics-context.xml");
+        appCtx = new AnnotationConfigApplicationContext();
+        appCtx.scan("biz.neustar.service.metrics");
+        appCtx.refresh();
         appCtx.registerShutdownHook();
         Server jettyServer = appCtx.getBean(Server.class);
         Preconditions.checkState(jettyServer.isStarted(), "Error in starting jetty");

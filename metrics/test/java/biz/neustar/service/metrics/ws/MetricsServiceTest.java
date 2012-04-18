@@ -29,7 +29,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
 
@@ -39,7 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:defaults/metrics-context.xml"})
+@ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
 @DirtiesContext
 public class MetricsServiceTest {
 

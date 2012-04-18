@@ -6,7 +6,7 @@
  * of their respective owners.
  */
 
-package biz.neustar.service.metrics.utils;
+package biz.neustar.service.common.spring;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;

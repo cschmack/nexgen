@@ -6,7 +6,7 @@
  * of their respective owners.
  */
 
-package biz.neustar.service.metrics.cxf;
+package biz.neustar.service.common.cxf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +18,8 @@ import javax.servlet.ServletException;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.apache.cxf.jaxrs.spring.SpringResourceFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import biz.neustar.service.metrics.utils.ValidationUtil;
+import biz.neustar.service.common.spring.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;

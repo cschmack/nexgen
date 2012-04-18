@@ -93,12 +93,12 @@ http://jira.codehaus.org/browse/JETTY-1493
 
         <!-- spring -->
         <dependency org="cglib" name="cglib-nodep" rev="2.2+"  conf="test,compile->default" />
-        <dependency org="org.springframework" name="org.springframework.core" rev="3.1.1.RELEASE"  conf="test,compile->runtime,aspectj" />
-        <dependency org="org.springframework" name="org.springframework.aop" rev="3.1.1.RELEASE"   conf="test,compile->runtime,aspectj" />
+        <dependency org="org.springframework" name="org.springframework.core" rev="3.1.1.RELEASE"  conf="test,compile->runtime,aspectj(default)" />
+        <dependency org="org.springframework" name="org.springframework.aop" rev="3.1.1.RELEASE"   conf="test,compile->runtime,aspectj(default)" />
         <dependency org="org.springframework" name="org.springframework.asm" rev="3.1.1.RELEASE"  conf="test,compile->runtime" />
-        <dependency org="org.springframework" name="org.springframework.aspects" rev="3.1.1.RELEASE"   conf="test,compile->runtime,aspectj" />
+        <dependency org="org.springframework" name="org.springframework.aspects" rev="3.1.1.RELEASE"   conf="test,compile->runtime,aspectj(default)" />
         <dependency org="org.springframework" name="org.springframework.beans" rev="3.1.1.RELEASE"   conf="test,compile->runtime" />
-        <dependency org="org.springframework" name="org.springframework.context" rev="3.1.1.RELEASE" conf="test,compile->runtime,aspectj"/>
+        <dependency org="org.springframework" name="org.springframework.context" rev="3.1.1.RELEASE" conf="test,compile->runtime,aspectj(default)"/>
         <dependency org="org.springframework" name="org.springframework.context.support" rev="3.1.1.RELEASE" conf="test,compile->runtime" />
         <dependency org="org.springframework" name="org.springframework.transaction" rev="3.1.1.RELEASE" conf="test,compile->runtime"/>
         <dependency org="org.springframework" name="org.springframework.expression" rev="3.1.1.RELEASE"  conf="test,compile->runtime" />

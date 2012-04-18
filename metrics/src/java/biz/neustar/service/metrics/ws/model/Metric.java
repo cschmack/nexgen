@@ -10,7 +10,7 @@ package biz.neustar.service.metrics.ws.model;
 
 import java.util.Map;
 
-import biz.neustar.service.metrics.utils.ToStringUtil;
+import biz.neustar.service.common.util.ToStringUtil;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

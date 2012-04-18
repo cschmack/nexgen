@@ -6,7 +6,7 @@
  * of their respective owners.
  */
 
-package biz.neustar.service.metrics.utils;
+package biz.neustar.service.common.util;
 
 import java.util.Map;
 import java.util.Map.Entry;

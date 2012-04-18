@@ -15,10 +15,12 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricValidator;
@@ -26,7 +28,7 @@ import biz.neustar.service.metrics.ws.model.MetricValidator;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:defaults/metrics-context.xml"})
+@ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
 @DirtiesContext
 public class MetricValidationTest {
 	
