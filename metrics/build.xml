@@ -81,7 +81,7 @@
     </copy>
 
 
-    <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+    <jar jarfile="${dist.dir}/lib/${ant.project.name}.jar">
       <fileset dir="${build.dir}"
           includes="**/*.class"/>
       <!-- Standard information about the program for the jar -->
@@ -91,6 +91,10 @@
         <attribute name="Implementation-Version" value="${full.version}"/>
       </manifest>
     </jar>
+    <tar destfile="${dist.dir}/${ant.project.name}.tgz"
+         basedir="${dist.dir}"
+         includes="lib/**,bin/**,conf/**"
+         compression="gzip" />
   </target>
 
   <target name="test" depends="compile-tests" description="run unit and story tests">
@@ -107,7 +111,7 @@
   <target name="analysis" depends="pmd,cpd,sloc"/>
 
   <target name="run" depends="dist">
-    <property name="dist.jar" value="${dist.dir}/${ant.project.name}.jar"/>
+    <property name="dist.jar" value="${dist.dir}/lib/${ant.project.name}.jar"/>
     <java classname="biz.neustar.service.metrics.Daemon"
            fork="true"
            failonerror="true"
