@@ -34,6 +34,7 @@
 
   <path id="test.classpath">
     <fileset dir="${lib.dir}/test" includes="*.jar"/>
+    <fileset dir="${test.base.dir}/data" includes="*.jar"/>
   </path>
 
   <target name="init" depends="">

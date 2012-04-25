@@ -40,7 +40,7 @@
               <pathelement path="${test.dir}:${config.dir}"/>
               <!-- put coverage instrumented classes first on classpath -->
               <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
-              <fileset dir="${lib.dir}/test" includes="*.jar" excludes="ant.jar"/>
+              <path refid="test.classpath"/>
               <junit-classpath/>
           </classpath>
           

@@ -9,8 +9,6 @@
 package biz.neustar.service.metrics.ws;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,9 +28,6 @@ import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricValidator;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @Component
 @Path("/metrics/v1/")
