@@ -69,6 +69,26 @@
   </target>
 
 
+  <target name="fake-versioned-jar" depends="revision">
+    <javac debug="yes" destdir="${test.base.dir}/data" srcdir="${test.base.dir}" 
+           includeantruntime="false">
+      <include name="data/VersionTestor.java"/>
+    </javac>
+    <!-- create the fake jar for testing VersionService -->
+    <jar jarfile="${test.base.dir}/data/VersionTestor.jar">
+      <fileset dir="${test.base.dir}/data"
+          includes="**/*.class"/>
+      <!-- Standard information about the program for the jar -->
+      <manifest>
+        <attribute name="Implementation-Vendor" value="Neustar, Inc."/>
+        <attribute name="Implementation-Title" value="${ant.project.name}"/>
+        <attribute name="Implementation-Version" value="${full.version}"/>
+      </manifest>
+    </jar>
+    <delete dir="${test.base.dir}/data/data" /> 
+  </target>
+
+
   <target name="dist" depends="compile,revision">
     <copy includeemptydirs="false" todir="${dist.dir}/conf">
       <fileset dir="${config.dir}"/>

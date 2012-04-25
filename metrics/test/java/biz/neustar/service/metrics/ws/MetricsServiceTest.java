@@ -59,6 +59,7 @@ public class MetricsServiceTest {
                 server.getConnectors()[0].getPort());
     }
     
+    
     @Test
     public void testCreation() throws JsonGenerationException, JsonMappingException, IOException {
         WebClient client = WebClient.create(location)

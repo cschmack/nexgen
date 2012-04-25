@@ -39,6 +39,9 @@ public class ServletHolderFactory {
             serviceClassNames.append(serviceClass.getName())
                 .append(' ');
         }
+        // setup versioning
+        VersionService.setClasses(serviceClasses);
+        serviceClassNames.append(VersionService.class.getName());
         
         ServletHolder holder = new ServletHolder(jaxrsServlet);
         holder.setInitParameter("jaxrs.serviceClasses", 
