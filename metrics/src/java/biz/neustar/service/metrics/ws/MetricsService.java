@@ -28,6 +28,7 @@ import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricValidator;
+import biz.neustar.service.metrics.ws.model.MetricsDAO;
 
 @Component
 @Path("/metrics/v1/")
@@ -41,6 +42,9 @@ public class MetricsService {
 
     @Autowired // should be like a DAO or something
     private ContextProvider contextProvider;
+    
+    @Autowired
+    private MetricsDAO metricsDAO;
     
     @GET
     @Path("/hello")
@@ -60,6 +64,7 @@ public class MetricsService {
 
         for (Metric metric : metrics) {
             LOGGER.debug("Metric Received: {}", metric);
+            metricsDAO.put(metric);
         }
     }
     

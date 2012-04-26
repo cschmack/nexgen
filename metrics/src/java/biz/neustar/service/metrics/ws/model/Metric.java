@@ -8,7 +8,10 @@
 
 package biz.neustar.service.metrics.ws.model;
 
+import java.util.Calendar;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
 
 import biz.neustar.service.common.util.ToStringUtil;
 
@@ -32,6 +35,12 @@ public class Metric {
     
     public String getTimestamp() {
         return timestamp;
+    }
+    
+    @JsonIgnore
+    public long getTimestampMillis() {
+        Calendar c = DatatypeConverter.parseDateTime(timestamp);
+        return c.getTimeInMillis();
     }
 
     public void setTimestamp(String timestamp) {
@@ -97,5 +106,21 @@ public class Metric {
             .add("resource", resource)
             .add("values", ToStringUtil.mapToString(values))
             .toString();
+    }
+    
+    public boolean equals(Object m) {
+        if (m instanceof Metric) {
+            Metric mIn = (Metric) m;
+            if (Objects.equal(mIn.from, from) &&
+                    Objects.equal(mIn.host, host) &&
+                    Objects.equal(mIn.requestor, requestor) &&
+                    Objects.equal(mIn.resource, resource) &&
+                    Objects.equal(mIn.timestamp, timestamp) &&
+                    Objects.equal(mIn.values, values) &&
+                    Objects.equal(mIn.other, other)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
