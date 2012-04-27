@@ -51,8 +51,7 @@ public class MetricsService {
     @Path("/hello")
     @Produces({MediaType.TEXT_PLAIN})
     public String hello() {
-        //return "hello world!";
-        throw new ServiceException(MoreStatus.TOO_MANY_REQUESTS, ServiceError.TOO_MANY_POINTS);
+        return "hello world!";
     }
     
     @POST
