@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import biz.neustar.service.common.cxf.MoreStatus;
 import biz.neustar.service.common.spring.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
@@ -50,7 +51,8 @@ public class MetricsService {
     @Path("/hello")
     @Produces({MediaType.TEXT_PLAIN})
     public String hello() {
-        return "hello world!";
+        //return "hello world!";
+        throw new ServiceException(MoreStatus.TOO_MANY_REQUESTS, ServiceError.TOO_MANY_POINTS);
     }
     
     @POST

@@ -15,20 +15,23 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import biz.neustar.service.common.cxf.MoreStatus;
+
 public class ServiceExceptionTest {
 
     @Test
     public void testServiceExceptionJson() {
         ServiceError err = ServiceError.TOO_MANY_POINTS;
         assertTrue(err.toString().length() > 0);
-        ServiceException ex = new ServiceException(509, err);
+        ServiceException ex = 
+                new ServiceException(MoreStatus.TOO_MANY_REQUESTS, err);
         
         assertEquals(err.getCode(), ex.getErrorCode());
         assertEquals(err.getText(), ex.getErrorText());
         
         Response resp = ex.getResponse();
         assertNotNull(resp);
-        assertEquals(509, resp.getStatus());
+        assertEquals(429, resp.getStatus());
         assertEquals("{\"errorText\":\"Too many metric points\",\"errorCode\":\"101\"}",
                 resp.getEntity());
     }

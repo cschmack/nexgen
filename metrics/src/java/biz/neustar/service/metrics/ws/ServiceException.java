@@ -11,8 +11,11 @@ package biz.neustar.service.metrics.ws;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import biz.neustar.service.common.cxf.MoreStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,9 +26,12 @@ public class ServiceException extends WebApplicationException {
     private static final long serialVersionUID = 73245012056851723L;
 
     private ServiceError serviceError;
+    private MoreStatus moreStatus;
     
-    public ServiceException(int status, ServiceError serviceError) {
-        super(status);
+    
+    public ServiceException(MoreStatus status, ServiceError serviceError) {
+        super(status.getStatusCode());
+        this.moreStatus = status;
         this.serviceError = serviceError;
     }
 
@@ -34,10 +40,11 @@ public class ServiceException extends WebApplicationException {
         this.serviceError = serviceError;
     }
 
-    public ServiceException(Throwable cause, int status, 
+    public ServiceException(Throwable cause, MoreStatus status, 
             ServiceError serviceError) {
         
-        super(cause, status);
+        super(cause, status.getStatusCode());
+        this.moreStatus = status;
         this.serviceError = serviceError;
     }
 
@@ -69,7 +76,11 @@ public class ServiceException extends WebApplicationException {
             Map<String, String> values = Maps.newHashMap();
             values.put("errorCode", Integer.toString(serviceError.getCode()));
             values.put("errorText", serviceError.getText());
+            respBuilder.type(MediaType.APPLICATION_JSON_TYPE);
             respBuilder.entity(mapper.writeValueAsString(values));
+            if (moreStatus != null) {
+                respBuilder.status(moreStatus);
+            }
             // respBuilder.entity(mapper.writeValueAsString(this)); // maybe in the "debug" mode?
         } catch (Exception e) {
             // error mapping serviceError, leave it as is..
