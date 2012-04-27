@@ -107,9 +107,4 @@ public class VersionService {
         }
         return output.toString();
     }
-    
-    public static void main(String[] args) {
-        System.out.println("jar version: " + 
-                VersionService.getClassJarVersion(VersionService.class).toString());
-    }
 }
