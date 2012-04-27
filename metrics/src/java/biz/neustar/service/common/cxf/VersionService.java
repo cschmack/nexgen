@@ -64,11 +64,7 @@ public class VersionService {
             jarVersions.put(getClassName(clazz),
                     getClassJarVersion(clazz));
         }
-        
-        if (jarVersions.isEmpty()) {
-            LOGGER.warn("no version information found");
-        }
-        
+                
         return jarVersions;
     }
     
