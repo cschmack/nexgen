@@ -132,12 +132,6 @@
         <pathelement location="${test.base.dir}"/>
       </junit-classpath>
     </test-units>
-<!--    
-    <test-stories />
--->
-  </target>
-
-  <target name="test2" depends="compile-tests" description="run unit and story tests">
     <test-stories>
       <junit-classpath>
         <pathelement location="${test.base.dir}"/>
@@ -145,7 +139,7 @@
     </test-stories>
   </target>
 
-  <target name="test3" depends="" description="run unit and story tests">
+  <target name="test-stories-only" depends="" description="run unit and story tests">
     <test-stories>
       <junit-classpath>
         <pathelement location="${test.base.dir}"/>
