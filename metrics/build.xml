@@ -67,6 +67,14 @@
         <pathelement location="${build.dir}" />
       </classpath>
     </javac>
+    <javac debug="yes" destdir="${test.build.dir}" srcdir="${test.base.dir}/stories" includeantruntime="false">
+      <include name="**/*.java" />
+      <classpath>
+        <path refid="test.classpath"/>
+        <pathelement location="${config.dir}" />
+        <pathelement location="${build.dir}" />
+      </classpath>
+    </javac>
   </target>
 
 
@@ -127,6 +135,22 @@
 <!--    
     <test-stories />
 -->
+  </target>
+
+  <target name="test2" depends="compile-tests" description="run unit and story tests">
+    <test-stories>
+      <junit-classpath>
+        <pathelement location="${test.base.dir}"/>
+      </junit-classpath>
+    </test-stories>
+  </target>
+
+  <target name="test3" depends="" description="run unit and story tests">
+    <test-stories>
+      <junit-classpath>
+        <pathelement location="${test.base.dir}"/>
+      </junit-classpath>
+    </test-stories>
   </target>
 
   <target name="analysis" depends="pmd,cpd,sloc"/>

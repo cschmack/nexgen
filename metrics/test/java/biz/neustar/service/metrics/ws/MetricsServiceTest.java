@@ -31,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import biz.neustar.service.common.util.JettyServerUtil;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
@@ -55,8 +56,7 @@ public class MetricsServiceTest {
     public void setup() {
         Server server = appCtx.getBean(Server.class);
         assertNotNull(server);
-        location = String.format("http://localhost:%s",
-                server.getConnectors()[0].getPort());
+        location = JettyServerUtil.getURL(server);
     }
     
     
