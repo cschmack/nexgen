@@ -120,6 +120,7 @@
   
   <macrodef name="test-stories">
     <element name="junit-classpath" optional="yes"/>
+    <attribute name="jvmargs" default="" />
     <sequential>
       <delete dir="${reports.dir}/stories"/>
       <mkdir dir="${reports.dir}/stories"/>
@@ -132,7 +133,10 @@
                 <path refid="test.classpath"/>
                 <junit-classpath/>
               </classpath>
-              
+
+              <!-- user configuration properties -->              
+              <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
+
               <arg value="--format"/>
               <arg value="junit:${reports.dir}/stories/cuke-report.xml"/>
               <arg value="--format"/>
