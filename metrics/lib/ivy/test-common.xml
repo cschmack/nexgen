@@ -99,68 +99,69 @@
        </xslt>
   </target>
 
-   
   
   <!-- cuke support -->
   
-  <property name="jruby.home" value="${basedir}/lib/.jruby"/>
+  <!-- default for jenkins to non-color mode, of course you can override this behavior with the macro -->
+  <condition property="default.cuke.color" value="yes" else="no">
+    <not><matches pattern="jenkins" string="${user.config}" /></not>
+  </condition>
   
-  <path id="cuke.classpath">
-    <fileset dir="${lib.dir}/test">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-  
-  <!-- needs project to have:
-       lib/test, test/stories
-       test/ruby (extra support in ruby, if required)
-       
-  -->
-  <!-- you don't necessarily have to cucumber.xml for spring, you can set it:  -Dcuke4duke.springXml=something_else.xml  -->
   
   <macrodef name="test-stories">
+    <!-- classpath to use for junit, in addition to the defaults -->
     <element name="junit-classpath" optional="yes"/>
+    <!-- any special jvm arguments -->
     <attribute name="jvmargs" default="" />
+    <!-- enable coloring of the output, defaults to true for everyone except 'jenkins' -->
+    <attribute name="color" default="${default.cuke.color}"/>
+  
     <sequential>
       <delete dir="${reports.dir}/stories"/>
       <mkdir dir="${reports.dir}/stories"/>
-          <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
-              <classpath>
-                <!-- load from test conf first -->
-                <pathelement path="${test.dir}:${config.dir}"/>
-                <!-- put coverage instrumented classes first on classpath -->
-                <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
-                <path refid="test.classpath"/>
-                <junit-classpath/>
-              </classpath>
+      
+      <condition property="cuke.color" value="" else="-m">
+        <istrue value="@{color}"/>
+      </condition>
 
-              <!-- user configuration properties -->              
-              <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
+      <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
+          <classpath>
+            <!-- load from test conf first -->
+            <pathelement path="${test.dir}:${config.dir}"/>
+            <!-- put coverage instrumented classes first on classpath -->
+            <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
+            <path refid="test.classpath"/>
+            <junit-classpath/>
+          </classpath>
 
-              <arg value="--format"/>
-              <arg value="junit:${reports.dir}/stories/cuke-report.xml"/>
-              <arg value="--format"/>
-              <arg value="pretty"/>
-              <arg value="--glue"/>
-              <arg value="biz.neustar.service.metrics"/>
-              <arg value="${test.base.dir}/stories"/>
-          </java>
+          <!-- user configuration properties -->              
+          <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
 
-          <junitreport todir="${reports.dir}/stories">
-              <fileset dir="${reports.dir}/stories">
-                  <include name="cuke-report.xml"/>
-              </fileset>
-              <report format="frames" todir="${reports.dir}/stories"/>
-          </junitreport>
+          <arg value="--format"/>
+          <arg value="junit:${reports.dir}/stories/cuke-report.xml"/>
+          <arg value="--format"/>
+          <arg value="pretty"/>
+          <arg value="${cuke.color}"/>
+          <arg value="--glue"/>
+          <arg value="biz.neustar.service.metrics"/>
+          <arg value="${test.base.dir}/stories"/>
+      </java>
 
-          <fail message="Cucumber failed">
-              <condition>
-                  <not>
-                      <equals arg1="${cucumber.exitstatus}" arg2="0"/>
-                  </not>
-              </condition>
-          </fail>
-      </sequential>
+      <junitreport todir="${reports.dir}/stories">
+          <fileset dir="${reports.dir}/stories">
+              <include name="cuke-report.xml"/>
+          </fileset>
+          <report format="frames" todir="${reports.dir}/stories"/>
+      </junitreport>
+
+      <fail message="Cucumber failed">
+          <condition>
+              <not>
+                  <equals arg1="${cucumber.exitstatus}" arg2="0"/>
+              </not>
+          </condition>
+      </fail>
+    </sequential>
   </macrodef>
   
   
