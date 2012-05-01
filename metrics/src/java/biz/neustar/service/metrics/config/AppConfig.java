@@ -116,7 +116,8 @@ public class AppConfig {
                 new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(servletHolder(), "/*"); // hand everything off to the CXF and let it map the paths
-        context.addFilter(gzipFilter(), "/*", EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
+        context.addFilter(gzipFilter(), "/*", 
+                EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
         server.setHandler(context);
         server.setStopAtShutdown(true);
         return server;
