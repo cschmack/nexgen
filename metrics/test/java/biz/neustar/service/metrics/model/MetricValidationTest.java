@@ -6,12 +6,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Set;
+import java.util.HashSet;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -92,21 +93,9 @@ public class MetricValidationTest {
         c.setTime(new Date());
         metric.setTimestamp(DatatypeConverter.printDateTime(c));
                 
-        ContextProvider contextProvider = new ContextProvider() {
+        ContextProvider contextProvider = Mockito.mock(ContextProvider.class);
+        Mockito.when(contextProvider.getContexts("biz.neustar.nis")).thenReturn(Sets.newHashSet("foo", "boo"));
 			
-			@Override
-			public Set<String> getContexts(String service) {
-				Set<String> contexts;
-				if (service.equals("biz.neustar.nis")) {
-					contexts = Sets.newHashSet("foo", "boo");
-				} else {
-					contexts = Sets.newHashSet(); // empty
-				}
-							
-				return contexts;
-			}
-		};
-
         MetricValidator metricValidator = new MetricValidator(contextProvider);
         
         assertTrue(isItemValid(metric, metricValidator, "metric"));
@@ -126,28 +115,43 @@ public class MetricValidationTest {
         c.setTime(new Date());
         metric.setTimestamp(DatatypeConverter.printDateTime(c));
         
-        
-        
-        ContextProvider contextProvider = new ContextProvider() {
-			
-			@Override
-			public Set<String> getContexts(String service) {
-				Set<String> contexts;
-				if (service.equals("biz.neustar.nis")) {
-					contexts = Sets.newHashSet("foo", "boo");
-				} else {
-					contexts = Sets.newHashSet(); // empty
-				}
-							
-				return contexts;
-			}
-		};
 
+        // looking for "goo", all we allow is "foo" or "boo"
+        ContextProvider contextProvider = Mockito.mock(ContextProvider.class);
+        Mockito.when(contextProvider.getContexts("biz.neustar.nis")).thenReturn(Sets.newHashSet("foo", "boo"));
+        
+        
         MetricValidator metricValidator = new MetricValidator(contextProvider);
         
         assertFalse(isItemValid(metric, metricValidator, "metric"));
 	}
 	
+	@Test
+	public void testInvalidExtraContextWithEmpty() {
+        Metric metric = new Metric();
+        metric.setFrom("biz.neustar.nis");
+        metric.setHost("example.com");
+        metric.setResource("http://www.foo.com");
+        metric.setRequestor("windstream");
+        metric.getValues().put("calls", 15.0);
+        metric.set("goo", (Object)"nothing");
+        
+        Calendar c = GregorianCalendar.getInstance();
+        c.setTime(new Date());
+        metric.setTimestamp(DatatypeConverter.printDateTime(c));
+        
+
+        // return empty set
+        ContextProvider contextProvider = Mockito.mock(ContextProvider.class);
+        // hmm, can't use Sets.newHashSet() because defaults to HashSet<Object>, probably a syntax that works though
+        Mockito.when(contextProvider.getContexts("biz.neustar.nis")).thenReturn(new HashSet<String>());
+        
+        
+        MetricValidator metricValidator = new MetricValidator(contextProvider);
+        
+        assertFalse(isItemValid(metric, metricValidator, "metric"));
+	}
+		
 	@Test
 	public void testInvalidExtraContextNoProvider() {
         Metric metric = new Metric();
