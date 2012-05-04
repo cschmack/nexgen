@@ -85,7 +85,7 @@ public class MetricsDAO {
                     Map<String, Object> metricValue = 
                         mapper.readValue(entry.getValue(), Map.class);
                     if (isContextMatch(metricValue, contextMatches)) {
-                        op.process(mapper.readValue(
+                        op.apply(mapper.readValue(
                                 entry.getValue(), Metric.class));
                     }
                 } catch (Exception e) {

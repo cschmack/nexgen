@@ -18,7 +18,7 @@ public abstract class Operation<T /* result type */>
     
     public abstract T getResult();
     
-    public abstract void process(Metric metric);
+    protected abstract void process(Metric metric);
     
     // implementation for Function
     public Void apply(Metric metric) {

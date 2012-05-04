@@ -56,6 +56,7 @@ public class MetricDAOTest {
         assertEquals(1, metricsDAO.getMetrics().size());
     }
     
+    @SuppressWarnings("rawtypes")
     @Test
     public void testOperation() {
         Metric metric = new Metric();
@@ -69,13 +70,13 @@ public class MetricDAOTest {
         
         metricsDAO.apply(op, 
                 0, (new Date()).getTime(), Pattern.compile("tests\\.foo"));
-        Mockito.verify(op, Mockito.times(1)).process(metric);
+        Mockito.verify(op, Mockito.times(1)).apply(metric);
         
         // try regex
         Operation op2 = Mockito.mock(Operation.class);
         metricsDAO.apply(op2, 
                 0, (new Date()).getTime(), Pattern.compile("tests.*"));
-        Mockito.verify(op2, Mockito.times(1)).process(metric);
+        Mockito.verify(op2, Mockito.times(1)).apply(metric);
     }
 
     @Test
@@ -102,6 +103,7 @@ public class MetricDAOTest {
         assertEquals(3.2, op.getResult(), 0.01);
     }
     
+    @SuppressWarnings("rawtypes")
     @Test
     public void testOperationContextFilter() {
         Metric metric1 = new Metric();
@@ -127,6 +129,6 @@ public class MetricDAOTest {
         metricsDAO.apply(op2, 
                 0, (new Date()).getTime(), Pattern.compile("tests.*"),
                 contextMatch);
-        Mockito.verify(op2, Mockito.times(1)).process(metric1);
+        Mockito.verify(op2, Mockito.times(1)).apply(metric1);
     }
 }
