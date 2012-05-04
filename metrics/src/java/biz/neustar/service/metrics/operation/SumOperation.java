@@ -10,7 +10,7 @@ package biz.neustar.service.metrics.operation;
 
 import biz.neustar.service.metrics.ws.model.Metric;
 
-public class SumOperation extends Operation {
+public class SumOperation extends Operation<Double> {
     private double sum;
     private String valueName;
 
@@ -19,7 +19,7 @@ public class SumOperation extends Operation {
     }
     
     @Override
-    public double getResult() {
+    public Double getResult() {
         return sum;
     }
 

@@ -68,10 +68,10 @@ public class MetricsServiceTest {
             .type(MediaType.APPLICATION_JSON);
 
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
+        metric.setSource("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
         metric.setHost("stulhdesec3.ultra.neustar.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 1.1234567890123);
         // YYYY-MM-DDTHH:MM:SS.mmm
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -91,10 +91,10 @@ public class MetricsServiceTest {
             .type(MediaType.APPLICATION_JSON);
 
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
+        metric.setSource("biz.neustar.nis.cnam2nddip.lib.quova.ip2ll");
         metric.setHost("stulhdesec3.ultra.neustar.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 9.9);
         // YYYY-MM-DDTHH:MM:SS.mmm
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");

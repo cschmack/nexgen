@@ -29,7 +29,7 @@ public class MetricValidator implements Validator {
 		Metric metric = (Metric)obj;
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(e, "from", "from.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(e, "host", "host.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(e, "source", "source.empty");
 		
 		if ((metric.getTimestamp() == null) || (metric.getTimestamp().trim().length() == 0)) {
 			e.rejectValue("timestamp", "timestamp.blank", "timestamp required");
@@ -41,14 +41,14 @@ public class MetricValidator implements Validator {
 				e.rejectValue("timestamp", "timestamp.parsedFailed", "timestamp parse failure");
 			}
 		}
-		
+
 		Map<String, Object> any = metric.any();
 		// check for extra 
 		if ((any != null) && (!any.isEmpty())) {
 			if (contextProvider == null) {
 				e.reject("context.unknown", "no Context Provider");
 			} else {
-				Set<String> contexts = contextProvider.getContexts(metric.getFrom());
+				Set<String> contexts = contextProvider.getContexts(metric.getSource());
 				
 				for (String s: any.keySet()) {
 					if (!contexts.contains(s)) {

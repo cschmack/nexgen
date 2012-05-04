@@ -8,11 +8,21 @@
 
 package biz.neustar.service.metrics.operation;
 
+import com.google.common.base.Function;
+
 import biz.neustar.service.metrics.ws.model.Metric;
 
-public abstract class Operation {
+public abstract class Operation<T /* result type */> 
+        implements Function<Metric, Void> {
 
-    public abstract double getResult();
+    
+    public abstract T getResult();
     
     public abstract void process(Metric metric);
+    
+    // implementation for Function
+    public Void apply(Metric metric) {
+        process(metric);
+        return null;
+    }
 }

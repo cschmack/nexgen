@@ -62,12 +62,12 @@ public class MetricsDAO {
         return metricsMap;
     }
     
-    public void apply(Operation op, long start, long end,
+    public void apply(Operation<?> op, long start, long end,
             Pattern metricMatch) {
         apply(op, start, end, metricMatch, new HashMap<String, Pattern>());
     }
     
-    public void apply(Operation op, long start, long end,
+    public void apply(Operation<?> op, long start, long end,
             Pattern metricMatch,
             Map<String, Pattern> contextMatches) {
         
@@ -92,7 +92,6 @@ public class MetricsDAO {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                
             }
         }
     }

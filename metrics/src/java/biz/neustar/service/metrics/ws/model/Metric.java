@@ -24,10 +24,14 @@ import com.google.common.collect.Maps;
 public class Metric {
 
     private String timestamp;   // required
-    private String from;        // required
+    private String source;      // required
     private String host;        // required
-    private String requestor; 
-    private String resource;    
+    // optionals
+    private String from;        // optional
+    private String process;     // optional
+    private String instance;    // optional
+    
+    private String resource;    // optional
     private Map<String, Double> values = Maps.newHashMap();
 
     @JsonIgnore
@@ -47,6 +51,14 @@ public class Metric {
         this.timestamp = timestamp;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }    
+    
     public String getFrom() {
         return from;
     }
@@ -63,12 +75,20 @@ public class Metric {
         this.host = host;
     }
 
-    public String getRequestor() {
-        return requestor;
+    public String getProcess() {
+        return process;
     }
 
-    public void setRequestor(String requestor) {
-        this.requestor = requestor;
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
+    public String getInstance() {
+        return instance;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
     }
 
     public String getResource() {
@@ -100,9 +120,11 @@ public class Metric {
     public String toString() {
         return Objects.toStringHelper(this)
             .add("timestamp", timestamp)
+            .add("source", source)
             .add("from", from)
             .add("host", host)
-            .add("requestor", requestor)
+            .add("process", process)
+            .add("instance", instance)
             .add("resource", resource)
             .add("values", ToStringUtil.mapToString(values))
             .toString();
@@ -113,7 +135,8 @@ public class Metric {
             Metric mIn = (Metric) m;
             if (Objects.equal(mIn.from, from) &&
                     Objects.equal(mIn.host, host) &&
-                    Objects.equal(mIn.requestor, requestor) &&
+                    Objects.equal(mIn.instance, instance) &&
+                    Objects.equal(mIn.process, process) &&
                     Objects.equal(mIn.resource, resource) &&
                     Objects.equal(mIn.timestamp, timestamp) &&
                     Objects.equal(mIn.values, values) &&

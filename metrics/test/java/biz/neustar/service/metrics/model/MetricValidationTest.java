@@ -46,10 +46,10 @@ public class MetricValidationTest {
 	@Test
 	public void testValidBasic() {
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis");
+        metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 12.123456789012);
         
         Calendar c = GregorianCalendar.getInstance();
@@ -64,10 +64,10 @@ public class MetricValidationTest {
 	@Test
 	public void testInvalidBasic() {
         Metric metric = new Metric();
-        // from is required, omit to make invalid -- metric.setFrom("biz.neustar.nis");
+        // source is required, omit to make invalid -- metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 1.0);
         
         Calendar c = GregorianCalendar.getInstance();
@@ -82,10 +82,10 @@ public class MetricValidationTest {
 	@Test
 	public void testValidExtraContext() {
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis");
+        metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 1.2);
         metric.set("foo", (Object)"nothing");
         
@@ -104,10 +104,10 @@ public class MetricValidationTest {
 	@Test
 	public void testInvalidExtraContext() {
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis");
+        metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 15.0);
         metric.set("goo", (Object)"nothing");
         
@@ -129,10 +129,10 @@ public class MetricValidationTest {
 	@Test
 	public void testInvalidExtraContextWithEmpty() {
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis");
+        metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 15.0);
         metric.set("goo", (Object)"nothing");
         
@@ -155,10 +155,10 @@ public class MetricValidationTest {
 	@Test
 	public void testInvalidExtraContextNoProvider() {
         Metric metric = new Metric();
-        metric.setFrom("biz.neustar.nis");
+        metric.setSource("biz.neustar.nis");
         metric.setHost("example.com");
         metric.setResource("http://www.foo.com");
-        metric.setRequestor("windstream");
+        metric.setFrom("windstream");
         metric.getValues().put("calls", 1.2321);
         metric.set("goo", (Object)"nothing");
         
