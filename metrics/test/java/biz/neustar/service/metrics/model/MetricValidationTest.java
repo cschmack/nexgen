@@ -24,7 +24,7 @@ import org.springframework.validation.Validator;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
-import biz.neustar.service.metrics.ws.model.MetricValidator;
+import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
 
 import com.google.common.collect.Sets;
 

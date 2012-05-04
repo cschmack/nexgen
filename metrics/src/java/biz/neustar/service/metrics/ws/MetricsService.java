@@ -15,6 +15,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -28,8 +29,10 @@ import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
-import biz.neustar.service.metrics.ws.model.MetricValidator;
+import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
 import biz.neustar.service.metrics.ws.model.MetricsDAO;
+import biz.neustar.service.metrics.ws.model.QueryRequest;
+import biz.neustar.service.metrics.ws.model.QueryResponse;
 
 @Component
 @Path("/metrics/v1/")
@@ -83,4 +86,10 @@ public class MetricsService {
 
     }
     
+    @GET
+    @Path("/query")
+    @Produces({MediaType.APPLICATION_JSON})
+    public QueryResponse query(@QueryParam("") QueryRequest query) {
+        return new QueryResponse();
+    }
 }

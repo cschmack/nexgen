@@ -1,23 +1,27 @@
-package biz.neustar.service.metrics.ws.model;
+package biz.neustar.service.metrics.ws.model.validation;
 
-import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import biz.neustar.service.metrics.ws.model.ContextProvider;
+import biz.neustar.service.metrics.ws.model.Metric;
+
 public class MetricValidator implements Validator {
 
 	private ContextProvider contextProvider;
+	private TimeValidator timeValidator = new TimeValidator();
 	
 	public MetricValidator(ContextProvider contextProvider) {
 		this.contextProvider = contextProvider;
 	}
 	
+	public void setTimeValidator(TimeValidator timeValidator) {
+	    this.timeValidator = timeValidator;
+	}
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -30,18 +34,8 @@ public class MetricValidator implements Validator {
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(e, "from", "from.empty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(e, "source", "source.empty");
+		ValidationUtils.invokeValidator(timeValidator, metric.getTimestamp(), e);
 		
-		if ((metric.getTimestamp() == null) || (metric.getTimestamp().trim().length() == 0)) {
-			e.rejectValue("timestamp", "timestamp.blank", "timestamp required");
-		} else {
-			try {
-				@SuppressWarnings("unused")
-				Calendar c = DatatypeConverter.parseDateTime(metric.getTimestamp());
-			} catch (IllegalArgumentException iae) {
-				e.rejectValue("timestamp", "timestamp.parsedFailed", "timestamp parse failure");
-			}
-		}
-
 		Map<String, Object> any = metric.any();
 		// check for extra 
 		if ((any != null) && (!any.isEmpty())) {

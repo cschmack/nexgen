@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +41,7 @@ import biz.neustar.service.metrics.ws.model.Metric;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -156,4 +159,23 @@ public class MetricsServiceTest {
         assertEquals(400, resp.getStatus());
     }
  
+    
+    @Test
+    public void testQuery() throws JsonGenerationException, JsonMappingException, IOException {
+        WebClient client = getClient("query")
+                .query("contexts", "source{biz.neustar.nis.*}", "host{rcweb1}")
+                .query("ts", "-12m")
+                .query("stats", "all")
+                .query("metrics", "responseTime")
+                .query("raw", "true");
+        Response resp = client.get();
+        //assertEquals(200, resp.getStatus());
+    }
+    
+    private WebClient getClient(String relativePath) {
+        return WebClient.create(location)
+            .path("/metrics/v1/" + relativePath)
+            .accept(MediaType.APPLICATION_JSON)
+            .type(MediaType.APPLICATION_JSON);
+    }
 }
