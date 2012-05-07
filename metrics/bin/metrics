@@ -3,6 +3,7 @@
 # /etc/init.d/@proj_name@
 #
 # Startup script for @proj_name@ App
+# Ubuntu-ized
 # 
 # chkconfig: 2345 20 80
 # description: Starts and stops App
@@ -16,8 +17,16 @@ export APP_HOME=/usr/local/share/$APP_NAME
 export APP_OWNR=$APP_NAME
 LOG_DIR=/var/log/$APP_NAME
 LOG_FILE=$LOG_DIR/$APP_NAME.log
-LOCK_FILE=/var/lock/subsys/$APP_NAME
-PID_DIR=/var/run/$APP_NAME
+
+DISTRO=`lsb_release -i|awk -F':' '{print $2}' |tr -d [:blank:]`
+if [ $DISTRO == "Ubuntu" ]; then
+  LOCK_FILE=/run/lock/subsys/$APP_NAME
+  PID_DIR=/run/$APP_NAME
+else
+  LOCK_FILE=/var/lock/subsys/$APP_NAME
+  PID_DIR=/var/run/$APP_NAME
+fi
+
 PID_FILE=$PID_DIR/$APP_NAME.pid
 APP_EXEC=$APP_HOME/bin/$APP_NAME.sh
 
