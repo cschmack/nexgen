@@ -20,7 +20,7 @@ LOG_FILE=$LOG_DIR/$APP_NAME.log
 
 DISTRO=`lsb_release -i|awk -F':' '{print $2}' |tr -d [:blank:]`
 if [ $DISTRO == "Ubuntu" ]; then
-  LOCK_FILE=/run/lock/subsys/$APP_NAME
+  LOCK_FILE=/run/lock/$APP_NAME
   PID_DIR=/run/$APP_NAME
 else
   LOCK_FILE=/var/lock/subsys/$APP_NAME
