@@ -1,0 +1,33 @@
+---
+- hosts: metrics.service
+  vars:
+  user: ubuntu
+  sudo: True
+  tasks:
+  - name: create metrics group
+    action: group name=metrics state=present
+  - name: create metrics user
+    action: user name=metrics group=metrics createhome=no state=present  
+  - name: create metrics dirs
+    action: file path=/usr/local/share/metrics state=directory owner=metrics group=metrics
+  - name: copy metrics service to remote
+    action: copy src=../dist/metrics.tgz dest=/tmp/metrics_$version.tgz
+  - name: shutdown metrics service
+    action: command /usr/local/share/metrics/bin/metrics stop
+    #action: service name=metrics state=stopped
+  - name: install metrics service
+    action: command tar -zxvf /tmp/metrics_$version.tgz -C /usr/local/share/metrics
+    notify:
+    - restart metrics service
+  - name: update permissions service
+    action: file path=/usr/local/share/metrics/bin/metrics mode=755 state=file
+  - name: update permissions startup
+    action: file path=/usr/local/share/metrics/bin/metrics.sh mode=755 state=file
+  handlers:
+  - name: restart metrics service
+    action: command /usr/local/share/metrics/bin/metrics restart
+  - name: cleanup old tgz's
+    action: 
+
+    #action: service name=metrics state=restarted
+ 
