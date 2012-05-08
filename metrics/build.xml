@@ -166,7 +166,7 @@
   </target>
 
   <!-- TODO -->
-  <target name="package" depends="clean-resolve,test,analysis,dist"/>
+  <target name="package" depends="clean-resolve,analysis,test,dist"/>
 
 
 </project>
