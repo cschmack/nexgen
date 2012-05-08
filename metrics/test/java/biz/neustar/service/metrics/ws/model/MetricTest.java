@@ -10,7 +10,11 @@ package biz.neustar.service.metrics.ws.model;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.junit.Test;
+
+import com.google.common.collect.Maps;
 
 public class MetricTest {
 
@@ -27,5 +31,31 @@ public class MetricTest {
         Metric m1 = new Metric();
         Object o = new Object();
         assertFalse(m1.equals(o));
+    }
+    
+    @Test
+    public void testEqualsFilledOut() {
+        Metric m1 = new Metric();
+        m1.setFrom("from");
+        m1.setHost("host");
+        m1.setInstance("instance");
+        m1.setProcess("proc");
+        m1.setResource("resource");
+        m1.setSource("source");
+        m1.setTimestamp("time");
+        m1.setValues(new HashMap<String,Double>());
+        
+        
+        Metric m2 = new Metric();
+        m2.setFrom("from");
+        m2.setHost("host");
+        m2.setInstance("instance");
+        m2.setProcess("proc");
+        m2.setResource("resource");
+        m2.setSource("source");
+        m2.setTimestamp("time");
+        m2.setValues(new HashMap<String,Double>());
+        
+        assertEquals(m1, m2);
     }
 }
