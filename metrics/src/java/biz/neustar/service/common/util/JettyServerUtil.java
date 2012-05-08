@@ -12,7 +12,7 @@ import org.eclipse.jetty.server.Server;
 
 import com.google.common.base.Preconditions;
 
-public class JettyServerUtil {
+public final class JettyServerUtil {
     private JettyServerUtil() {
         // utility class
     }
