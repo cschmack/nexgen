@@ -11,12 +11,16 @@ package biz.neustar.service.metrics;
 import static org.junit.Assert.*;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Service.State;
 
 public class DaemonTest {
     
@@ -35,5 +39,41 @@ public class DaemonTest {
         assertTrue(daemon.isRunning());
         daemon.stopAndWait();
         assertFalse(daemon.isRunning());
+    }
+    
+    @Test
+    public void testInterruption() {
+        final AtomicReference<Thread> threadRef = new AtomicReference<Thread>();
+        Daemon daemon = new Daemon() {
+            @Override
+            protected void run() throws Exception {
+                threadRef.set(Thread.currentThread());
+                super.run();
+            }
+        };
+        
+        Thread.yield();
+        State state = daemon.startAndWait();
+        Thread.yield();
+        assertTrue(State.RUNNING == state);
+        assertTrue(daemon.isRunning());
+        try {
+            while (threadRef.get() == null) {
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            fail();
+        }
+        assertNotNull(threadRef.get());
+        
+        threadRef.get().interrupt();
+        Thread.yield();
+        try {
+            while (threadRef.get().isAlive()) {
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            fail();
+        }
     }
 }
