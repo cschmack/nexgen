@@ -169,7 +169,7 @@ public class MetricsServiceTest {
                 .query("metrics", "responseTime")
                 .query("raw", "true");
         Response resp = client.get();
-        //assertEquals(200, resp.getStatus());
+        assertEquals(200, resp.getStatus());
     }
     
     private WebClient getClient(String relativePath) {
