@@ -11,6 +11,7 @@ package biz.neustar.service.metrics.ws;
 import static org.junit.Assert.*;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 
 import org.junit.Test;
@@ -34,5 +35,21 @@ public class ServiceExceptionTest {
         assertEquals(429, resp.getStatus());
         assertEquals("{\"errorText\":\"Too many metric points\",\"errorCode\":\"101\"}",
                 resp.getEntity());
+    }
+    
+    @Test
+    public void testServiceExceptionCtors() {
+        ServiceException srvcEx1 = new ServiceException(Status.BAD_REQUEST, ServiceError.TOO_LARGE);
+        assertNotNull(srvcEx1);
+        
+        ServiceException srvcEx2 = new ServiceException(
+                new Throwable(), 
+                Status.BAD_REQUEST, ServiceError.TOO_LARGE);
+        assertNotNull(srvcEx2);
+        
+        ServiceException srvcEx3 = new ServiceException(
+                new Throwable(), MoreStatus.NETWORK_AUTH_REQUIRED,
+                ServiceError.TOO_LARGE);
+        assertNotNull(srvcEx3);
     }
 }
