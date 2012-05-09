@@ -8,6 +8,9 @@
 
 package biz.neustar.service.metrics.operation;
 
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,6 +31,7 @@ public class FilterOperationTest {
         op.setNextOperation(nextOp);
         op.apply(new Metric());
         Mockito.verifyZeroInteractions(nextOp);
+        assertTrue(op.getResult() == null);
     }
     
 

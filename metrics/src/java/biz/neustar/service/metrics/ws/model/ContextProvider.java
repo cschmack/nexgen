@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 @Component
 public class ContextProvider {
-    private static final Set<String> EMPTY_SET = Sets.newHashSet();
+    private static final Set<String> EMPTY_SET = ImmutableSet.of();
     
     private ConcurrentSkipListMap<String, ContextConfig> contextMap = 
             new ConcurrentSkipListMap<String, ContextConfig>();

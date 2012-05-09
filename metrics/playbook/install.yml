@@ -13,21 +13,26 @@
   - name: copy metrics service to remote
     action: copy src=../dist/metrics.tgz dest=/tmp/metrics_$version.tgz
   - name: shutdown metrics service
-    action: command /usr/local/share/metrics/bin/metrics stop
-    #action: service name=metrics state=stopped
+    action: service name=metrics state=stopped
   - name: install metrics service
     action: command tar -zxvf /tmp/metrics_$version.tgz -C /usr/local/share/metrics
     notify:
     - restart metrics service
-  - name: update permissions service
-    action: file path=/usr/local/share/metrics/bin/metrics mode=755 state=file
-  - name: update permissions startup
-    action: file path=/usr/local/share/metrics/bin/metrics.sh mode=755 state=file
+  - name: fix metrics service permissions for $item
+    action: file path=$item mode=755 state=file
+    with_items:
+      - /usr/local/share/metrics/bin/metrics
+      - /usr/local/share/metrics/bin/metrics.sh
+  - name: install init.d script
+    action: copy src=/usr/local/share/metrics/bin/metrics dest=/etc/init.d/metrics mode=755
+  - name: enable metrics service
+    action: command /usr/sbin/update-rc.d metrics start 99 2 3 4 5 . stop 99 0 1 6 .
   handlers:
   - name: restart metrics service
-    action: command /usr/local/share/metrics/bin/metrics restart
-  - name: cleanup old tgz's
-    action: 
+    action: service name=metrics state=restarted
 
-    #action: service name=metrics state=restarted
+  #- name: cleanup old tgz's
+  #  action: 
+  #action: command /usr/local/share/metrics/bin/metrics restart
+  #sudo update-rc.d -f metrics remove
  

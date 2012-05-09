@@ -40,6 +40,7 @@ import biz.neustar.service.common.cxf.SpringJaxrsServlet;
 import biz.neustar.service.common.spring.PropertySourcesUtil;
 import biz.neustar.service.metrics.ws.MetricsService;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper;
 import com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper;
@@ -144,7 +145,10 @@ public class AppConfig {
     public SpringJaxrsServlet springJaxrsServlet() {
         SpringJaxrsServlet servlet = new SpringJaxrsServlet();
         // add the jackson json providers
-        servlet.addProvider(new JacksonJsonProvider());
+        JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+        jsonProvider.configure(
+                SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        servlet.addProvider(jsonProvider);
         servlet.addProvider(new JsonMappingExceptionMapper());
         servlet.addProvider(new JsonParseExceptionMapper());
         return servlet;

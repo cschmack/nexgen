@@ -16,7 +16,7 @@ import biz.neustar.service.metrics.ws.model.Metric;
 
 
 public class CompositeOperation extends Operation<List<Operation<?>>> {
-    private List<Operation<?>> operations = Lists.newArrayList();
+    private final List<Operation<?>> operations = Lists.newArrayList();
     
     public void add(Operation<?> operation) {
         operations.add(operation);

@@ -12,7 +12,7 @@ import biz.neustar.service.metrics.ws.model.Metric;
 
 public class SumOperation extends Operation<Double> {
     private double sum;
-    private String valueName;
+    private final String valueName;
 
     public SumOperation(String valueName) {
         this.valueName = valueName;
