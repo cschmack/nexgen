@@ -1,7 +1,6 @@
 package biz.neustar.service.metrics.ws.model.validation;
 
 import java.util.Calendar;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.DatatypeConverter;
