@@ -10,6 +10,8 @@ package biz.neustar.service.metrics.ws.model;
 
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 public class QueryRequest {
     
     private List<String> contexts;
@@ -58,5 +60,14 @@ public class QueryRequest {
         this.raw = raw;
     }
     
-    
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("ts", ts)
+                .add("te", te)
+                .add("contexts", contexts)
+                .add("metrics", metrics)
+                .add("stats", stats)
+                .add("raw", raw)
+                .toString();
+    }
 }
