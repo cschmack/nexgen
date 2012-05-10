@@ -8,9 +8,14 @@
 
 package biz.neustar.service.metrics.ws.model;
 
+import java.util.List;
+import java.util.Map;
+
 
 public class QueryResponse {
 	private long rawDataCount;
+	private List<Metric> rawData;
+	private Map<String,Map<String,Double>> statistics;
 
 	public long getRawDataCount() {
 		return this.rawDataCount;
@@ -18,5 +23,21 @@ public class QueryResponse {
 	
 	public void setRawDataCount(long rawDataCount) {
 		this.rawDataCount = rawDataCount;
+	}
+
+	public List<Metric> getRawData() {
+		return rawData;
+	}
+
+	public void setRawData(List<Metric> metrics) {
+		this.rawData = metrics;
+	}
+
+	public Map<String, Map<String, Double>> getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(Map<String, Map<String, Double>> statistics) {
+		this.statistics = statistics;
 	}
 }
