@@ -28,6 +28,17 @@ var context =
       id : 'query', 
       path : '/metrics/v1/query',
       description : 'Query functions for stored metrics',
+      params: [ {
+        "properties":{
+          "contexts":{"type":"array", "items" : {"type" : "string"} },
+          "ts":{"type":"string"},
+          "te":{"type":"string"},
+          "raw":{"type":"boolean"},
+          "metrics":{"type":"array", "items" : {"type" : "string"} },
+          "stats":{"type":"array", "items" : {"type" : "string"} },
+        }
+      },
+      ]
     },
     {
       id : 'version', 
@@ -163,6 +174,7 @@ var context =
                 <fieldset>
                   <legend>POST <a href="{{this.path}}">{{this.path}}</a></legend>
                     <div class="control-group">
+                    <!-- TODO change this to just be a big input text field with pre-canned json -->
                       {{#each this.params}}
                         {{#each_entry this.properties}}
                         <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
@@ -212,8 +224,18 @@ var context =
           <div id="{{this.id}}" class="accordion-body collapse">
             <div class="accordion-inner">
               <label>{{this.description}}</label>
-              <form method="GET" action="{{this.path}}" class="api-test-form" data-target="#{{this.id}}-response">
+              <form method="GET" action="{{this.path}}" class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
                 <label>GET <a href="{{this.path}}">{{this.path}}</a></label>
+                {{#each this.params}}
+                  {{#each_entry this.properties}}
+                  <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
+                  <div class="controls">
+                    <input id="input-{{this._index}}" name="{{this._key}}" 
+                      type="text" class="input-xlarge" data-type="{{this._value.type}}">
+                    <p class="help-inline">{{this._value.type}}</p>
+                  </div>
+                  {{/each_entry}}
+                {{/each}}
                 <button type="submit" class="btn">Submit</button>
               </form>
               <label>Response</label>
@@ -340,11 +362,20 @@ $(function() {
   // after template rendering 
   $(".api-test-form").submit(function(o) {
     var target = this.dataset['target'];
+    
+    var serializedData = "";
+    if (this.method == "POST" || this.method == "PUT") {
+      // if it's a POST or PUT serialize to JSON
+      serializedData = JSON.stringify($(this).serializeObject());
+    } else {
+      serializedData = $(this).serialize();
+    }
+    
     $.ajax({
       url: this.action,
       type: this.method,
       contentType: 'application/json',
-      data: JSON.stringify($(this).serializeObject()),
+      data: serializedData,
     }).done(function(data, textStatus, req) {
       $(target).html(req.status + " " + req.statusText + "<br/>" +
             "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
