@@ -115,8 +115,12 @@ public class AppConfig {
     @Bean
     public String staticPath() {
         StringBuilder path = new StringBuilder();
-        String appHome = System.getProperty("APP_HOME", ".");
-        path.append(appHome);
+        String appHome = System.getenv("APP_HOME");
+        if (appHome == null) {
+            path.append('.');
+        } else {
+            path.append(appHome);
+        }
         if (!staticPath.startsWith("/")) {
             path.append("/");
         }
