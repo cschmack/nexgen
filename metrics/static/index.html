@@ -45,6 +45,19 @@ var context =
       id : 'config', 
       path : '/metrics/v1/config',
       description : 'Configure custom contexts in the metrics service',
+      params : [        
+        { "description":"context configuration",
+          "type":"object",
+          "properties":{
+            "name":{"type":"string"},
+            "description":{"type":"string"},
+            "contexts": { 
+              "type" : "array",
+              "items" : { "type" : "string" },
+            }
+           }
+         }
+      ]
     },
   ],
   PUT : [],
@@ -72,10 +85,10 @@ var context =
         
           <li class="nav-header">CREATE / UPDATE</li>
           {{#each POST}}
-          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
           {{/each}}
           {{#each PUT}}
-          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
           {{/each}}
           {{#unless PUT}}
             {{#unless POST}}
@@ -86,18 +99,18 @@ var context =
         
           <li class="nav-header">READ</li>
           {{#each GET}}
-          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
           {{/each}}
           {{#unless GET}}
-          <li>Not supported</li>
+            <li>Not supported</li>
           {{/unless}}
           
           <li class="nav-header">DELETE</li>
           {{#each DELETE}}
-          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
           {{/each}}
           {{#unless DELETE}}
-          <li>Not supported</li>
+            <li>Not supported</li>
           {{/unless}}
         </script>        
       </ul>
@@ -119,7 +132,31 @@ var context =
             </a>
           </div>
           <div id="{{this.id}}" class="accordion-body collapse">
-            <div class="accordion-inner"><label>{{this.description}}</label></div>
+            <div class="accordion-inner"><label>{{this.description}}</label>
+              <form method="POST" action="{{this.path}}" id="form-{{this.id}}"
+                  class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
+                <fieldset>
+                  <legend>POST <a href="{{this.path}}">{{this.path}}</a></legend>
+                    <div class="control-group">
+                      {{#each this.params}}
+                        {{#each_entry this.properties}}
+                        <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
+                        <div class="controls">
+                          <input id="input-{{this._index}}" name="{{this._key}}" 
+                            type="text" class="input-xlarge" data-type="{{this._value.type}}">
+                          <p class="help-inline">{{this._value.type}}</p>
+                        </div>
+                        {{/each_entry}}
+                      {{/each}}
+                    </div>
+                </fieldset>
+                
+                <button type="submit" class="btn">Submit</button>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
           </div>
         </div>
         {{/each}}
@@ -217,18 +254,65 @@ $(function() {
   });
   **/
   
+  Handlebars.registerHelper('each_entry', function(obj, options) {
+    var result = "";
+    var index = 0;
+    for (var k in obj) {
+      this._index = index;
+      this._key = k
+      this._value = obj[k];
+      console.log("key: " + this._key + " value: " + this._value);
+      result += options.fn(this);
+      index++;
+    }
+    return result;
+  });
+  
+  printObj = function(obj) {
+    for (var k in obj) {
+      console.log("key: " + k + " value: " + obj[k]);
+    }
+  };
+  
+  
   $('script[type="text/x-handlebars-template"]').each(function() {
     template = Handlebars.compile($(this).html());
     rendered = template(context);
     $(this).replaceWith(rendered);
   });
   
+  // based on: http://stackoverflow.com/questions/1184624/convert-form-data-to-js-object-with-jquery
+  $.fn.serializeObject = function()
+  {
+      var o = {};
+      var a = this.serializeArray();
+      input_array_selector = '#' + this.attr('id') + ' :input[data-type="array"]';
+
+      $.each(a, function() {        
+          is_array = $(input_array_selector + '[name="' + this.name + '"]').length > 0;
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else if (is_array) {
+              o[this.name] = [this.value || ''];
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+  };
+  
   // after template rendering 
-  $(".api-test-form").submit(function(o) {    
+  $(".api-test-form").submit(function(o) {
     var target = this.dataset['target'];
+    console.log(JSON.stringify($(this).serializeObject()));
     $.ajax({
       url: this.action,
       type: this.method,
+      contentType: 'application/json',
+      data: JSON.stringify($(this).serializeObject()),
     }).done(function(data, textStatus, req) {
       $(target).html(req.status + " " + req.statusText + "<br/>" +
             "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
@@ -237,6 +321,7 @@ $(function() {
     });
     return false;
   });
+  
   
 });
 </script>
