@@ -108,6 +108,9 @@
     <copy includeemptydirs="false" todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}/runtime"/>
     </copy>
+    <copy includeemptydirs="false" todir="${dist.dir}/static">
+      <fileset dir="${basedir}/static"/>
+    </copy>
 
 
     <jar jarfile="${dist.dir}/lib/${ant.project.name}.jar">
@@ -122,7 +125,7 @@
     </jar>
     <tar destfile="${dist.dir}/${ant.project.name}.tgz"
          basedir="${dist.dir}"
-         includes="lib/**,bin/**,conf/**"
+         includes="lib/**,bin/**,conf/**,static/**"
          compression="gzip" />
   </target>
 
