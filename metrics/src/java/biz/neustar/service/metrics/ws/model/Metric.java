@@ -22,6 +22,12 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class Metric {
+	public final static String SOURCE = "source";
+	public final static String HOST = "host";
+	public final static String FROM = "from";
+	public final static String PROCESS = "process";
+	public final static String INSTANCE = "instance";
+	public final static String RESOURCE = "resource";
 
     private String timestamp;   // required
     private String source;      // required

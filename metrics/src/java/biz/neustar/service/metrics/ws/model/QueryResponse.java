@@ -8,6 +8,15 @@
 
 package biz.neustar.service.metrics.ws.model;
 
-public class QueryResponse {
 
+public class QueryResponse {
+	private long rawDataCount;
+
+	public long getRawDataCount() {
+		return this.rawDataCount;
+	}
+	
+	public void setRawDataCount(long rawDataCount) {
+		this.rawDataCount = rawDataCount;
+	}
 }

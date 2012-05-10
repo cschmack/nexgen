@@ -23,16 +23,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import biz.neustar.service.common.cxf.MoreStatus;
 import biz.neustar.service.common.spring.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
-import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
 import biz.neustar.service.metrics.ws.model.MetricsDAO;
 import biz.neustar.service.metrics.ws.model.QueryRequest;
 import biz.neustar.service.metrics.ws.model.QueryResponse;
+import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
+import biz.neustar.service.metrics.ws.model.validation.QueryRequestValidator;
 
 @Component
 @Path("/metrics/v1/")
@@ -90,6 +90,10 @@ public class MetricsService {
     @Path("/query")
     @Produces({MediaType.APPLICATION_JSON})
     public QueryResponse query(@QueryParam("") QueryRequest query) {
-        return new QueryResponse();
+    	LOGGER.debug("Request: " + query.toString());
+    	validationUtil.validate(query, new QueryRequestValidator());
+    	QueryResponse q = new QueryResponse();
+    	q.setRawDataCount(0);
+        return q;
     }
 }
