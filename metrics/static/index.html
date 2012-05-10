@@ -40,6 +40,31 @@ var context =
       id : 'metrics', 
       path : '/metrics/v1/metrics',
       description : 'Create metrics in the metrics service',
+      params : [        
+        { "description":"list of metrics",
+          "type":"array",
+          "items" : {
+            "type" : "object",
+            "properties":{
+              "timestamp":{"type":"string", "required": true},
+              "source":{"type":"string", "required": true},
+              "host":{"type":"string", "required" : true},
+              "from":{"type":"string"},
+              "process":{"type":"string"},
+              "instance":{"type":"string"},
+              "resource":{"type":"string"},
+              
+              "values": { 
+                "type" : "array",
+                "items" : { 
+                  "type" : "object",
+                  "properties" : { "" : {"type" : "number" } },
+                }
+              }
+            }
+           }
+         }
+      ]
     },
     {
       id : 'config', 
@@ -150,8 +175,9 @@ var context =
                       {{/each}}
                     </div>
                 </fieldset>
-                
-                <button type="submit" class="btn">Submit</button>
+                <div class="controls">
+                  <button type="submit" class="btn">Submit</button>
+                </div>
               </form>
               <label>Response</label>
               <div id="{{this.id}}-response" class="well">
@@ -261,7 +287,7 @@ $(function() {
       this._index = index;
       this._key = k
       this._value = obj[k];
-      console.log("key: " + this._key + " value: " + this._value);
+//      console.log("key: " + this._key + " value: " + this._value);
       result += options.fn(this);
       index++;
     }
@@ -287,18 +313,25 @@ $(function() {
       var o = {};
       var a = this.serializeArray();
       input_array_selector = '#' + this.attr('id') + ' :input[data-type="array"]';
-
-      $.each(a, function() {        
-          is_array = $(input_array_selector + '[name="' + this.name + '"]').length > 0;
+      input_selector = '#' + this.attr('id') + ' :input';
+      $.each(a, function() {
+          input_el = $(input_selector + '[name="' + this.name + '"]');
+          var type = input_el[0].dataset['type'];
+          
+          var value = o[this.name] || '';
+          if (type == "integer" || type == "number") {
+            value = Number(value);
+          }
+          
           if (o[this.name] !== undefined) {
               if (!o[this.name].push) {
-                  o[this.name] = [o[this.name]];
+                  o[this.name] = [value];
               }
-              o[this.name].push(this.value || '');
-          } else if (is_array) {
-              o[this.name] = [this.value || ''];
+              o[this.name].push(value);
+          } else if (type == "array") {
+              o[this.name] = [this.value];
           } else {
-              o[this.name] = this.value || '';
+              o[this.name] = this.value;
           }
       });
       return o;
@@ -307,7 +340,6 @@ $(function() {
   // after template rendering 
   $(".api-test-form").submit(function(o) {
     var target = this.dataset['target'];
-    console.log(JSON.stringify($(this).serializeObject()));
     $.ajax({
       url: this.action,
       type: this.method,
