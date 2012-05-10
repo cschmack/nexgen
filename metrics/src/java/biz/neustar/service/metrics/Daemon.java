@@ -29,7 +29,6 @@ public class Daemon extends AbstractExecutionThreadService {
     
     @Override
     protected void run() throws Exception {
-        //appCtx = new ClassPathXmlApplicationContext("defaults/metrics-context.xml");
         appCtx = new AnnotationConfigApplicationContext();
         appCtx.scan("biz.neustar.service");
         appCtx.refresh();

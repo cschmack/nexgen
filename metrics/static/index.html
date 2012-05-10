@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+<title>Metrics API Testor</title>
+<!--
+<link type="text/css" href="css/south-street/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+#006a3e
+-->
+
+
+<link type="text/css" href="css/bootstrap.css" rel="stylesheet" />
+
+<style type="text/css">
+  .neustar-bgcolor {color: #006a3e;}
+  .no-hover-underline:hover {
+    text-decoration: none;
+  }
+</style>
+
+<script type="text/javascript">
+var context = 
+{
+  GET : [
+    {
+      id : 'query', 
+      path : '/metrics/v1/query',
+      description : 'Query functions for stored metrics',
+    },
+    {
+      id : 'version', 
+      path : '/version',
+      description : 'Request the current version of the service',
+    },
+  ], 
+  POST : [
+    {
+      id : 'metrics', 
+      path : '/metrics/v1/metrics',
+      description : 'Create metrics in the metrics service',
+    },
+    {
+      id : 'config', 
+      path : '/metrics/v1/config',
+      description : 'Configure custom contexts in the metrics service',
+    },
+  ],
+  PUT : [],
+  DELETE : [],
+};
+</script>
+
+
+</head>
+
+<body>
+
+<ul class="breadcrumb">
+  <li>
+      <p class="neustar-bgcolor">Metrics API v1.0 Testor</p>
+  </li>
+</ul>
+
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+      <ul class="nav nav-list">
+        <script type="text/x-handlebars-template" data-context="">
+        
+          <li class="nav-header">CREATE / UPDATE</li>
+          {{#each POST}}
+          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#each PUT}}
+          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless PUT}}
+            {{#unless POST}}
+              <li>Not supported</li>
+            {{/unless}}
+          {{/unless}}
+        
+        
+          <li class="nav-header">READ</li>
+          {{#each GET}}
+          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless GET}}
+          <li>Not supported</li>
+          {{/unless}}
+          
+          <li class="nav-header">DELETE</li>
+          {{#each DELETE}}
+          <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless DELETE}}
+          <li>Not supported</li>
+          {{/unless}}
+        </script>        
+      </ul>
+    </div>
+    <div class="span8">
+      
+
+    <!-- lifted from the example on bootstrap -->
+    <div class="accordion" id="api-accordion">
+    
+      <script type="text/x-handlebars-template" data-context="">
+
+        {{#each POST}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-warning">POST</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner"><label>{{this.description}}</label></div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each PUT}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-warning">PUT</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner"><label>{{this.description}}</label></div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each GET}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-success">GET</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <label>{{this.description}}</label>
+              <form method="GET" action="{{this.path}}" class="api-test-form" data-target="#{{this.id}}-response">
+                <label>GET <a href="{{this.path}}">{{this.path}}</a></label>
+                <button type="submit" class="btn">Submit</button>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each DELETE}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-info">DELETE</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <label>{{this.description}}</label>
+              <form method="DELETE" action="{{this.path}}" class="api-test-form" data-target="#{{this.id}}-response">
+                <label>DELETE <a href="{{this.path}}">{{this.path}}</a></label>
+                <button type="submit" class="btn">Submit</button>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+      </script>
+            
+
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#version2">
+            <span class="badge badge-success">GET</span>
+            /version
+          </a>
+        </div>
+        <div id="version2" class="accordion-body collapse">
+          <div class="accordion-inner">
+            <label>Request the current version of the service</label>  
+            <form method="GET" action="/version" class="api-test-form" data-target="#version-response">
+              <label>GET <a href="/version">/version</a></label>
+              <button type="submit" class="btn">Submit</button>
+            </form>
+            <label>Response</label>
+            <div id="version-response" class="well">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>      
+      
+      
+    </div>
+  <div>
+</div>
+
+
+
+
+
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/handlebars-1.0.0.beta.6.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+  
+  /**
+  $.getJSON('describe.json', function(data) {
+    context = data;
+    $('script[type="text/x-handlebars-template"]').each(function() {
+      console.log($(this).html());
+      template = Handlebars.compile($(this).html());
+      //var context = {};
+      rendered = template(context);
+      console.log(rendered);
+      $(this).replaceWith(rendered);
+    });
+  });
+  **/
+  
+  $('script[type="text/x-handlebars-template"]').each(function() {
+    template = Handlebars.compile($(this).html());
+    rendered = template(context);
+    $(this).replaceWith(rendered);
+  });
+  
+  // after template rendering 
+  $(".api-test-form").submit(function(o) {    
+    var target = this.dataset['target'];
+    $.ajax({
+      url: this.action,
+      type: this.method,
+    }).done(function(data, textStatus, req) {
+      $(target).html(req.status + " " + req.statusText + "<br/>" +
+            "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+    }).fail(function(req) {
+      $(target).html("Request Error: " + req.status + " " + req.statusText + "<br/>");
+    });
+    return false;
+  });
+  
+});
+</script>
+
+</body>
+</html>

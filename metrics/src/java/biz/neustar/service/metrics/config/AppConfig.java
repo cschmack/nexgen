@@ -15,6 +15,10 @@ import java.util.Map;
 import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -62,6 +66,8 @@ public class AppConfig {
     @Value("${app.serverMaxThreadPool}")
     private int serverMaxThreadPool;
     
+    @Value("${app.staticPath}")
+    private String staticPath;
     
     public int getServerPort() {
         return serverPort;
@@ -106,6 +112,18 @@ public class AppConfig {
         return new AnnotationAwareAspectJAutoProxyCreator();
     }
     
+    @Bean
+    public String staticPath() {
+        StringBuilder path = new StringBuilder();
+        String appHome = System.getProperty("APP_HOME", ".");
+        path.append(appHome);
+        if (!staticPath.startsWith("/")) {
+            path.append("/");
+        }
+        path.append(staticPath);
+        return path.toString().replace("//", "/");
+    }
+    
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server getServer() {
         LOGGER.debug("initializing server");
@@ -113,16 +131,35 @@ public class AppConfig {
         server.setSendServerVersion(false);
         server.setThreadPool(new QueuedThreadPool(serverMaxThreadPool));
         
+        // static content
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(false);
+        resourceHandler.setResourceBase(staticPath());
+        ContextHandler ctxHandler = new ContextHandler();
+        ctxHandler.setContextPath("/");
+        ctxHandler.setHandler(resourceHandler);
+        
+        // servlet context
         ServletContextHandler context =
                 new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(servletHolder(), "/*"); // hand everything off to the CXF and let it map the paths
         context.addFilter(gzipFilter(), "/*", 
                 EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
-        server.setHandler(context);
+
+        // set of handlers
+        //ContextHandlerCollection handlers = new ContextHandlerCollection();
+        HandlerList handlers = new HandlerList();
+        //handlers.addHandler(ctxHandler);
+        handlers.addHandler(resourceHandler);
+        handlers.addHandler(context);
+        
+        server.setHandler(handlers);
+        
         server.setStopAtShutdown(true);
         return server;
     }
+    
     
     @Bean
     public FilterHolder gzipFilter() {
