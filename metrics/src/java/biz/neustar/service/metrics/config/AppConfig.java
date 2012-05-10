@@ -135,6 +135,7 @@ public class AppConfig {
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(false);
         resourceHandler.setResourceBase(staticPath());
+        LOGGER.debug("resource base: {} ", resourceHandler.getResourceBase());
         ContextHandler ctxHandler = new ContextHandler();
         ctxHandler.setContextPath("/");
         ctxHandler.setHandler(resourceHandler);
