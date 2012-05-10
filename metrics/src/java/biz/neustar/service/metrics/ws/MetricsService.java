@@ -25,12 +25,12 @@ import org.springframework.stereotype.Component;
 
 import biz.neustar.service.common.spring.ValidationUtil;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
-import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricsDAO;
 import biz.neustar.service.metrics.ws.model.QueryRequest;
 import biz.neustar.service.metrics.ws.model.QueryResponse;
+import biz.neustar.service.metrics.ws.model.validation.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
 import biz.neustar.service.metrics.ws.model.validation.QueryRequestValidator;
 
