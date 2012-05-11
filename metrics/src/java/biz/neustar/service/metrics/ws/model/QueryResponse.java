@@ -25,7 +25,8 @@ public class QueryResponse {
 	}
 	
 	public long getRawDataCount() {
-		return this.rawDataCount;
+		//return this.rawDataCount;
+		return this.rawData.size( );
 	}
 	
 	public void setRawDataCount(long rawDataCount) {
@@ -65,5 +66,6 @@ public class QueryResponse {
 	public void setRawData( List<Metric> rawData )
 	{
 		this.rawData = rawData;
+		this.rawDataCount = rawData.size( );
 	}
 }

@@ -146,7 +146,7 @@ public class QueryRequest {
     public void setStats(List<String> stats) {
         this.stats = stats;
     }
-    public boolean isRaw() {
+    public boolean getRaw( ) {
         return raw;
     }
     public void setRaw(boolean raw) {
