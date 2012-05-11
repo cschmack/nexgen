@@ -29,8 +29,11 @@ import biz.neustar.service.metrics.ws.model.ContextConfigValidator;
 import biz.neustar.service.metrics.ws.model.ContextProvider;
 import biz.neustar.service.metrics.ws.model.Metric;
 import biz.neustar.service.metrics.ws.model.MetricsDAO;
+import biz.neustar.service.metrics.ws.model.QueryCriteria;
+import biz.neustar.service.metrics.ws.model.QueryCriteriaBuilder;
 import biz.neustar.service.metrics.ws.model.QueryRequest;
 import biz.neustar.service.metrics.ws.model.QueryResponse;
+import biz.neustar.service.metrics.ws.model.QueryResponseBuilder;
 import biz.neustar.service.metrics.ws.model.validation.MetricValidator;
 import biz.neustar.service.metrics.ws.model.validation.QueryRequestValidator;
 
@@ -92,7 +95,13 @@ public class MetricsService {
     public QueryResponse query(@QueryParam("") QueryRequest query) {
     	LOGGER.debug("Request: " + query.toString());
     	validationUtil.validate(query, new QueryRequestValidator());
-    	QueryResponse q = new QueryResponse();
+    	
+    	// Build up the query criteria from the QueryRequest.    	
+    	QueryCriteria qc = QueryCriteriaBuilder.buildQueryCriteria( query );
+    	
+    	metricsDAO.apply( qc );
+    	
+    	QueryResponse q = QueryResponseBuilder.buildQueryResponse( qc.getOperations( ) );
     	q.setRawDataCount(0);
         return q;
     }

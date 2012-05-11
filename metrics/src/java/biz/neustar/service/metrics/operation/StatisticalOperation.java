@@ -12,28 +12,19 @@ import com.google.common.base.Function;
 
 import biz.neustar.service.metrics.ws.model.Metric;
 
-public abstract class Operation<T /* result type */> 
+public abstract class StatisticalOperation extends Operation<Double>
         implements Function<Metric, Void> {
 
-	protected String name;
-    
-    public abstract T getResult();
-    
-    protected abstract void process(Metric metric);
-    
-    // implementation for Function
-    public Void apply(Metric metric) {
-        process(metric);
-        return null;
-    }
-
-	public String getName( )
-	{
-		return name;
-	}
-
-	public void setName( String name )
+	protected final String valueName;
+	
+	public StatisticalOperation( String name, String valueName )
 	{
 		this.name = name;
+		this.valueName = valueName;
+	}
+
+	public String getValueName( )
+	{
+		return valueName;
 	}
 }

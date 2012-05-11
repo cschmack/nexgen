@@ -10,12 +10,11 @@ package biz.neustar.service.metrics.operation;
 
 import biz.neustar.service.metrics.ws.model.Metric;
 
-public class SumOperation extends Operation<Double> {
+public class SumOperation extends StatisticalOperation {
     private double sum;
-    private final String valueName;
 
     public SumOperation(String valueName) {
-        this.valueName = valueName;
+    	super( "sum", valueName );
     }
     
     @Override
