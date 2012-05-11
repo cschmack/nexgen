@@ -173,13 +173,23 @@ var context =
                   class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
                 <fieldset>
                   <legend>POST <a href="{{this.path}}">{{this.path}}</a></legend>
-                  <div class="control-group">
-                    {{#each this.params}}
-                      <div class="controls">                      
-                        <textarea id="form-{{../id}}-json" rows="15" class="input-xxlarge">{{{sample_json this}}}</textarea>
-                      </div>                      
-                    {{/each}}
-                  </div>
+                    <div class="control-group">
+                    <!-- TODO change this to just be a big input text field with pre-canned json -->
+                      {{#each this.params}}
+                        <div class="controls">                      
+                          <textarea rows="15" class="input-xxlarge">{{{sample_json this}}}</textarea>
+                        </div>
+                      
+                        {{#each_entry this.properties}}
+                        <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
+                        <div class="controls">
+                          <input id="input-{{this._index}}" name="{{this._key}}" 
+                            type="text" class="input-xlarge" data-type="{{this._value.type}}">
+                          <p class="help-inline">{{this._value.type}}</p>
+                        </div>
+                        {{/each_entry}}
+                      {{/each}}
+                    </div>
                 </fieldset>
                 <div class="controls">
                   <button type="submit" class="btn">Submit</button>
@@ -303,6 +313,9 @@ $(function() {
       for (var key in obj) {
         var type = obj[key].type;
 
+        console.log("key : " + key);      
+        console.log(type);
+
         if (type == "string") {
           result[key] = type;
         } else if (type == "number") {
@@ -326,6 +339,8 @@ $(function() {
     };
 
     generateSampleJson = function(obj) {
+      console.log(obj.type);
+
       // either object or array
       if (obj.type == "array") {
         return [generateSampleJsonObj(obj).items];
@@ -414,12 +429,9 @@ $(function() {
     var target = this.dataset['target'];
     
     var serializedData = "";
-    var method = new String(this.method).toLowerCase();
-
-    if (method == "post" || method == "put") {
+    if (this.method == "POST" || this.method == "PUT") {
       // if it's a POST or PUT serialize to JSON
-      var textArea = '#' + $(this).attr('id') + '-json';
-      serializedData = $(textArea)[0].value;
+      serializedData = JSON.stringify($(this).serializeObject());
     } else {
       serializedData = $(this).serialize();
     }
