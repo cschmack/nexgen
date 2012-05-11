@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class QueryResponse {
 	private long rawDataCount;
-	private Map<String,Map<String,Double>> statistics;
 	private List<Metric> rawData;
+	private Map<String,Map<String,Double>> statistics;
 
 	public QueryResponse( )
 	{

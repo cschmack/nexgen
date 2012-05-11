@@ -1,8 +1,10 @@
-package biz.neustar.service.metrics.ws.model;
+package biz.neustar.service.metrics.ws.model.validation;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import biz.neustar.service.metrics.ws.model.ContextConfig;
 
 public final class ContextConfigValidator implements Validator {
     

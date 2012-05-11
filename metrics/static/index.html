@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+<title>Metrics API Testor</title>
+<!--
+<link type="text/css" href="css/south-street/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+#006a3e
+-->
+
+
+<link type="text/css" href="css/bootstrap.css" rel="stylesheet" />
+
+<style type="text/css">
+  .neustar-bgcolor {color: #006a3e;}
+  .no-hover-underline:hover {
+    text-decoration: none;
+  }
+</style>
+
+<script type="text/javascript">
+var context = 
+{
+  GET : [
+    {
+      id : 'query', 
+      path : '/metrics/v1/query',
+      description : 'Query functions for stored metrics',
+      params: [ {
+        "properties":{
+          "contexts":{"type":"array", "items" : {"type" : "string"} },
+          "ts":{"type":"string"},
+          "te":{"type":"string"},
+          "raw":{"type":"boolean"},
+          "metrics":{"type":"array", "items" : {"type" : "string"} },
+          "stats":{"type":"array", "items" : {"type" : "string"} },
+        }
+      },
+      ]
+    },
+    {
+      id : 'version', 
+      path : '/version',
+      description : 'Request the current version of the service',
+    },
+  ], 
+  POST : [
+    {
+      id : 'metrics', 
+      path : '/metrics/v1/metrics',
+      description : 'Create metrics in the metrics service',
+      params : [        
+        { "description":"list of metrics",
+          "type":"array",
+          "items" : {
+            "type" : "object",
+            "properties":{
+              "timestamp":{"type":"string", "required": true},
+              "source":{"type":"string", "required": true},
+              "host":{"type":"string", "required" : true},
+              "from":{"type":"string"},
+              "process":{"type":"string"},
+              "instance":{"type":"string"},
+              "resource":{"type":"string"},
+              
+              "values": { 
+                "type" : "array",
+                "items" : { 
+                  "type" : "object",
+                  "properties" : { "" : {"type" : "number" } },
+                }
+              }
+            }
+           }
+         }
+      ]
+    },
+    {
+      id : 'config', 
+      path : '/metrics/v1/config',
+      description : 'Configure custom contexts in the metrics service',
+      params : [        
+        { "description":"context configuration",
+          "type":"object",
+          "properties":{
+            "name":{"type":"string"},
+            "description":{"type":"string"},
+            "contexts": { 
+              "type" : "array",
+              "items" : { "type" : "string" },
+            }
+           }
+         }
+      ]
+    },
+  ],
+  PUT : [],
+  DELETE : [],
+};
+</script>
+
+
+</head>
+
+<body>
+
+<ul class="breadcrumb">
+  <li>
+      <p class="neustar-bgcolor">Metrics API v1.0 Testor</p>
+  </li>
+</ul>
+
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+      <ul class="nav nav-list">
+        <script type="text/x-handlebars-template" data-context="">
+        
+          <li class="nav-header">CREATE / UPDATE</li>
+          {{#each POST}}
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#each PUT}}
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless PUT}}
+            {{#unless POST}}
+              <li>Not supported</li>
+            {{/unless}}
+          {{/unless}}
+        
+        
+          <li class="nav-header">READ</li>
+          {{#each GET}}
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless GET}}
+            <li>Not supported</li>
+          {{/unless}}
+          
+          <li class="nav-header">DELETE</li>
+          {{#each DELETE}}
+            <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
+          {{/each}}
+          {{#unless DELETE}}
+            <li>Not supported</li>
+          {{/unless}}
+        </script>        
+      </ul>
+    </div>
+    <div class="span8">
+      
+
+    <!-- lifted from the example on bootstrap -->
+    <div class="accordion" id="api-accordion">
+    
+      <script type="text/x-handlebars-template" data-context="">
+
+        {{#each POST}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-warning">POST</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner"><label>{{this.description}}</label>
+              <form method="POST" action="{{this.path}}" id="form-{{this.id}}"
+                  class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
+                <fieldset>
+                  <legend>POST <a href="{{this.path}}">{{this.path}}</a></legend>
+                  <div class="control-group">
+                    {{#each this.params}}
+                      <div class="controls">                      
+                        <textarea id="form-{{../id}}-json" rows="15" class="input-xxlarge">{{{sample_json this}}}</textarea>
+                      </div>                      
+                    {{/each}}
+                  </div>
+                </fieldset>
+                <div class="controls">
+                  <button type="submit" class="btn">Submit</button>
+                </div>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each PUT}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-warning">PUT</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner"><label>{{this.description}}</label></div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each GET}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-success">GET</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <label>{{this.description}}</label>
+              <form method="GET" action="{{this.path}}" class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
+                <label>GET <a href="{{this.path}}">{{this.path}}</a></label>
+                {{#each this.params}}
+                  {{#each_entry this.properties}}
+                  <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
+                  <div class="controls">
+                    <input id="input-{{this._index}}" name="{{this._key}}" 
+                      type="text" class="input-xlarge" data-type="{{this._value.type}}">
+                    <p class="help-inline">{{this._value.type}}</p>
+                  </div>
+                  {{/each_entry}}
+                {{/each}}
+                <button type="submit" class="btn">Submit</button>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+        {{#each DELETE}}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
+              <span class="badge badge-info">DELETE</span>
+              {{this.path}}
+            </a>
+          </div>
+          <div id="{{this.id}}" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <label>{{this.description}}</label>
+              <form method="DELETE" action="{{this.path}}" class="api-test-form" data-target="#{{this.id}}-response">
+                <label>DELETE <a href="{{this.path}}">{{this.path}}</a></label>
+                <button type="submit" class="btn">Submit</button>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+      </script>
+    </div>      
+      
+      
+    </div>
+  <div>
+</div>
+
+
+
+
+
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/handlebars-1.0.0.beta.6.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+  
+  /**
+  $.getJSON('describe.json', function(data) {
+    context = data;
+    $('script[type="text/x-handlebars-template"]').each(function() {
+      console.log($(this).html());
+      template = Handlebars.compile($(this).html());
+      //var context = {};
+      rendered = template(context);
+      console.log(rendered);
+      $(this).replaceWith(rendered);
+    });
+  });
+  **/
+  
+  ////////  
+
+    generateSampleJsonObj = function(obj) {
+      var result = {};
+      for (var key in obj) {
+        var type = obj[key].type;
+
+        if (type == "string") {
+          result[key] = type;
+        } else if (type == "number") {
+          result[key] = 3.14;
+        } else if (type == "integer") {
+          result[key] = 999;
+        } else if (type == "boolean") {
+          result[key] = true;
+        } else if (type == "null") {
+          result[key] = null;
+        } else if (type == "any") {
+          result[key] = type;
+        } else if (type == "object") {
+          result[key] = generateSampleJsonObj(obj[key].properties);
+        } else if (type == "array") {
+          var item = generateSampleJsonObj(obj[key]);
+          result[key] = [item.items];
+        }
+      }
+      return result;
+    };
+
+    generateSampleJson = function(obj) {
+      // either object or array
+      if (obj.type == "array") {
+        return [generateSampleJsonObj(obj).items];
+      } else if (obj.type == "object") {
+        return generateSampleJsonObj(obj.properties);
+      }
+    };
+
+    /*
+  var v = generateSampleJson(context.POST[0].params[0]);
+  console.log(JSON.stringify(v));
+  console.log("-----------------");
+  var v = generateSampleJson(context.POST[1].params[0]);
+  console.log(JSON.stringify(v));
+  */
+  //////////
+  
+  
+  
+  Handlebars.registerHelper('sample_json', function(obj) {
+    return new Handlebars.SafeString(
+      JSON.stringify(generateSampleJson(obj), null, 2));
+  });
+  
+  Handlebars.registerHelper('each_entry', function(obj, options) {
+    var result = "";
+    var index = 0;
+    for (var k in obj) {
+      this._index = index;
+      this._key = k
+      this._value = obj[k];
+//      console.log("key: " + this._key + " value: " + this._value);
+      result += options.fn(this);
+      index++;
+    }
+    return result;
+  });
+  
+  printObj = function(obj) {
+    for (var k in obj) {
+      console.log("key: " + k + " value: " + obj[k]);
+    }
+  };
+  
+  
+  $('script[type="text/x-handlebars-template"]').each(function() {
+    template = Handlebars.compile($(this).html());
+    rendered = template(context);
+    $(this).replaceWith(rendered);
+  });
+  
+  // based on: http://stackoverflow.com/questions/1184624/convert-form-data-to-js-object-with-jquery
+  $.fn.serializeObject = function()
+  {
+      var o = {};
+      var a = this.serializeArray();
+      input_array_selector = '#' + this.attr('id') + ' :input[data-type="array"]';
+      input_selector = '#' + this.attr('id') + ' :input';
+      $.each(a, function() {
+          input_el = $(input_selector + '[name="' + this.name + '"]');
+          var type = input_el[0].dataset['type'];
+          
+          var value = o[this.name] || '';
+          if (type == "integer" || type == "number") {
+            value = Number(value);
+          }
+          
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [value];
+              }
+              o[this.name].push(value);
+          } else if (type == "array") {
+              o[this.name] = [this.value];
+          } else {
+              o[this.name] = this.value;
+          }
+      });
+      return o;
+  };
+  
+
+  
+  // after template rendering 
+  $(".api-test-form").submit(function(o) {
+    var target = this.dataset['target'];
+    
+    var serializedData = "";
+    var method = new String(this.method).toLowerCase();
+
+    if (method == "post" || method == "put") {
+      // if it's a POST or PUT serialize to JSON
+      var textArea = '#' + $(this).attr('id') + '-json';
+      serializedData = $(textArea)[0].value;
+    } else {
+      serializedData = $(this).serialize();
+    }
+    
+    $.ajax({
+      url: this.action,
+      type: this.method,
+      contentType: 'application/json',
+      data: serializedData,
+    }).done(function(data, textStatus, req) {
+      $(target).html(req.status + " " + req.statusText + "<br/>" +
+            "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+    }).fail(function(req) {
+      $(target).html("Request Error: " + req.status + " " + req.statusText + "<br/>");
+    });
+    return false;
+  });
+  
+  
+});
+</script>
+
+</body>
+</html>
