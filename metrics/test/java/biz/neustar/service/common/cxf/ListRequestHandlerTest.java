@@ -50,4 +50,36 @@ public class ListRequestHandlerTest {
         assertNull(handler.handleRequest(inputMessage, resourceClass));
         Mockito.verify(inputMessage).put(Message.QUERY_STRING, expected);
     }
+    
+    
+    @Test
+    public void testNullQuery() {
+        ListRequestHandler handler = new ListRequestHandler();
+        Message inputMessage = Mockito.mock(Message.class);
+        
+        Mockito.when(inputMessage.get(Message.QUERY_STRING))
+            .thenReturn(null);
+                
+        ClassResourceInfo resourceClass = Mockito.mock(ClassResourceInfo.class);
+        
+        assertNull(handler.handleRequest(inputMessage, resourceClass));
+        
+        Mockito.verify(inputMessage, Mockito.never()).put(
+                Mockito.anyString(), Mockito.anyString());
+    }
+    
+    @Test
+    public void testEmptyQuery() {
+        ListRequestHandler handler = new ListRequestHandler();
+        Message inputMessage = Mockito.mock(Message.class);
+        
+        Mockito.when(inputMessage.get(Message.QUERY_STRING))
+            .thenReturn("");
+                
+        ClassResourceInfo resourceClass = Mockito.mock(ClassResourceInfo.class);
+        
+        assertNull(handler.handleRequest(inputMessage, resourceClass));
+        
+        Mockito.verify(inputMessage).put(Message.QUERY_STRING, "");
+    }
 }

@@ -9,18 +9,12 @@
 package biz.neustar.service.common.cxf;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Message;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 public class ListRequestHandler implements RequestHandler {
@@ -29,6 +23,10 @@ public class ListRequestHandler implements RequestHandler {
     @Override
     public Response handleRequest(Message inputMessage, ClassResourceInfo resourceClass) {
         String queryString = (String) inputMessage.get(Message.QUERY_STRING);
+        
+        if (queryString == null) {
+            return null;
+        }
         
         StringBuilder fixedParams = new StringBuilder();
         Iterable<String> params = PARAM_SPLITTER.split(queryString);
