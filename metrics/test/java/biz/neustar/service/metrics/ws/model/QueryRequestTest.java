@@ -7,6 +7,8 @@ import java.util.Date;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+
 public class QueryRequestTest {
 	
 	@Test
@@ -108,5 +110,12 @@ public class QueryRequestTest {
 
         
 	}
-	
+
+	@Test
+	public void testCriteriaBuilder() {
+	    QueryRequest query = new QueryRequest();
+	    query.setMetrics(ImmutableList.of("foo1", "foo2"));
+	    QueryCriteria criteria = QueryCriteriaBuilder.buildQueryCriteria(query);
+	    criteria.getOperations();
+	}
 }

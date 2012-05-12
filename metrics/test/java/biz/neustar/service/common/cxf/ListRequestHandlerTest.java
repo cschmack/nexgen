@@ -20,6 +20,7 @@ public class ListRequestHandlerTest {
     @Test
     public void testContextList() {
         ListRequestHandler handler = new ListRequestHandler();
+        
         Message inputMessage = Mockito.mock(Message.class);
         
         Mockito.when(inputMessage.get(Message.QUERY_STRING))

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class QueryRequest {
 	
@@ -44,11 +45,11 @@ public class QueryRequest {
 	public static final String TS_REGEX = "^(-)(\\d+)([smhDM])$";
 	public static final String TE_REGEX = "^(\\d+)([smhDM])$";
 
-    private List<String> contexts;
+    private List<String> contexts = Lists.newArrayList();
     private String ts;
     private String te;
-    private List<String> metrics;
-    private List<String> stats;
+    private List<String> metrics = Lists.newArrayList();
+    private List<String> stats = Lists.newArrayList();
     private boolean raw = false;
     
     @JsonIgnore

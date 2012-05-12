@@ -11,13 +11,17 @@ package biz.neustar.service.metrics.ws.model;
 import java.util.List;
 
 import biz.neustar.service.metrics.operation.AvgOperation;
+import biz.neustar.service.metrics.operation.OperationFactory;
 import biz.neustar.service.metrics.operation.RawRecordsOperation;
 import biz.neustar.service.metrics.operation.SumOperation;
 
-public class QueryCriteriaBuilder
-{
-	public static QueryCriteria buildQueryCriteria( QueryRequest query )
-	{
+public class QueryCriteriaBuilder {
+    
+    private QueryCriteriaBuilder() {
+        // purely utility
+    }
+    
+	public static QueryCriteria buildQueryCriteria(QueryRequest query) {
 		QueryCriteria qc = new QueryCriteria( );		
 		QueryRequest.StartEndTimeMillis tstePair = query.getStartEndTimeMillis( );
 		qc.setTs( tstePair.getStart( ) );
@@ -48,7 +52,6 @@ public class QueryCriteriaBuilder
 				// This is a non-reserved context, so just stick it in the other/any field.
 				qc.addOther( key, kvPair.getContextValue( )  );
 			}
-				
 		}
 		
 		// TODO: Figure out how we're actually going to determine which operations to create.  This
@@ -61,28 +64,32 @@ public class QueryCriteriaBuilder
 		//CompositeOperation ops = new CompositeOperation( );
 		
 		List<String> stats = query.getStats( );
-		if( stats != null )
+		List<String> metrics = query.getMetrics( );
+		for( String stat : stats )
 		{
-			List<String> metrics = query.getMetrics( );
-			for( String stat : stats )
+		    for (String metric : metrics) {
+		        OperationFactory opFactory = OperationFactory.find(stat);
+		        if (opFactory != null) {
+		            qc.addOperation(opFactory.create(metric));
+		        }
+		    }
+		    
+			if( stat.equalsIgnoreCase( "SUM" ) )
 			{
-				if( stat.equalsIgnoreCase( "SUM" ) )
+				for( String metric : metrics )
 				{
-					for( String metric : metrics )
-					{
-						//ops.add( new SumOperation( metric ) );
-						qc.addOperation( new SumOperation( metric ) );
-						//opsCount++;
-					}
+					//ops.add( new SumOperation( metric ) );
+					qc.addOperation( new SumOperation( metric ) );
+					//opsCount++;
 				}
-				else if( stat.equalsIgnoreCase( "AVG" ) )
+			}
+			else if( stat.equalsIgnoreCase( "AVG" ) )
+			{
+				for( String metric : metrics )
 				{
-					for( String metric : metrics )
-					{
-						//ops.add( new SumOperation( metric ) );
-						qc.addOperation( new AvgOperation( metric ) );
-						//opsCount++;
-					}
+					//ops.add( new SumOperation( metric ) );
+					qc.addOperation( new AvgOperation( metric ) );
+					//opsCount++;
 				}
 			}
 		}

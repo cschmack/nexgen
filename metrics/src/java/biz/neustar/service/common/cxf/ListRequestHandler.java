@@ -30,7 +30,6 @@ public class ListRequestHandler implements RequestHandler {
         
         StringBuilder fixedParams = new StringBuilder();
         Iterable<String> params = PARAM_SPLITTER.split(queryString);
-        //List<String> fixedParams = new ArrayList<String>();
         for (String param : params) {
             int index = param.indexOf(',');
             
