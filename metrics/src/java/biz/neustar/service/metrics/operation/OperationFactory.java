@@ -21,8 +21,19 @@ public enum OperationFactory {
         public StatisticalOperation create(String valueName) {
             return new AvgOperation(valueName);
         }
+    },
+    MIN() {
+    	@Override
+        public StatisticalOperation create(String valueName) {
+            return new MinOperation(valueName);
+    	}
+    },
+    MAX() {
+    	@Override
+        public StatisticalOperation create(String valueName) {
+            return new MaxOperation(valueName);
+    	}
     }
-    
     ;
         
     public abstract StatisticalOperation create(String valueName);

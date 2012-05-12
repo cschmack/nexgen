@@ -73,25 +73,6 @@ public class QueryCriteriaBuilder {
 		            qc.addOperation(opFactory.create(metric));
 		        }
 		    }
-		    
-			if( stat.equalsIgnoreCase( "SUM" ) )
-			{
-				for( String metric : metrics )
-				{
-					//ops.add( new SumOperation( metric ) );
-					qc.addOperation( new SumOperation( metric ) );
-					//opsCount++;
-				}
-			}
-			else if( stat.equalsIgnoreCase( "AVG" ) )
-			{
-				for( String metric : metrics )
-				{
-					//ops.add( new SumOperation( metric ) );
-					qc.addOperation( new AvgOperation( metric ) );
-					//opsCount++;
-				}
-			}
 		}
 		
 		
