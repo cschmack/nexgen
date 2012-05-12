@@ -48,7 +48,7 @@ public class ServletHolderFactory {
                 serviceClassNames.toString());
 
         // Register our providers
-        final String providers = "";//JacksonJsonProvider.class.getName();
+        final String providers = ListRequestHandler.class.getName();
         if (!providers.isEmpty()) {
             holder.setInitParameter("jaxrs.providers", providers);
         }

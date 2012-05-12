@@ -8,13 +8,9 @@
 
 package biz.neustar.service.metrics.ws.model;
 
-import java.util.Calendar;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
 import biz.neustar.service.metrics.operation.AvgOperation;
-import biz.neustar.service.metrics.operation.CompositeOperation;
 import biz.neustar.service.metrics.operation.RawRecordsOperation;
 import biz.neustar.service.metrics.operation.SumOperation;
 
