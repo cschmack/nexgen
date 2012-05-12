@@ -39,12 +39,11 @@
 
   <target name="init" depends="">
     <tstamp/>
-    <delete dir="${build.dir}"/>
-    <mkdir dir="${build.dir}"/>
-    <delete dir="${test.build.dir}"/>
-    <mkdir dir="${test.build.dir}"/>
-    <mkdir dir="${coverage.build.dir}"/>
-    <mkdir dir="${reports.dir}"/>
+    <recreate-dir dir="${build.dir}"/>
+    <recreate-dir dir="${test.build.dir}"/>
+    <recreate-dir dir="${coverage.build.dir}"/>
+    <recreate-dir dir="${reports.dir}"/>
+    <recreate-dir dir="${dist.dir}"/>
   </target>
 
   <target name="compile" depends="init, resolve">
@@ -143,7 +142,7 @@
   </target>
 
   <target name="test-stories-only" depends="" description="run unit and story tests">
-    <test-stories>
+    <test-stories color="yes">
       <junit-classpath>
         <pathelement location="${test.base.dir}"/>
       </junit-classpath>
