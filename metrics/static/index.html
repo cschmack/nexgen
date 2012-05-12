@@ -295,53 +295,42 @@ $(function() {
     });
   });
   **/
-  
-  ////////  
 
-    generateSampleJsonObj = function(obj) {
-      var result = {};
-      for (var key in obj) {
-        var type = obj[key].type;
+  generateSampleJsonObj = function(obj) {
+    var result = {};
+    for (var key in obj) {
+      var type = obj[key].type;
 
-        if (type == "string") {
-          result[key] = type;
-        } else if (type == "number") {
-          result[key] = 3.14;
-        } else if (type == "integer") {
-          result[key] = 999;
-        } else if (type == "boolean") {
-          result[key] = true;
-        } else if (type == "null") {
-          result[key] = null;
-        } else if (type == "any") {
-          result[key] = type;
-        } else if (type == "object") {
-          result[key] = generateSampleJsonObj(obj[key].properties);
-        } else if (type == "array") {
-          var item = generateSampleJsonObj(obj[key]);
-          result[key] = [item.items];
-        }
+      if (type == "string") {
+        result[key] = type;
+      } else if (type == "number") {
+        result[key] = 3.14;
+      } else if (type == "integer") {
+        result[key] = 999;
+      } else if (type == "boolean") {
+        result[key] = true;
+      } else if (type == "null") {
+        result[key] = null;
+      } else if (type == "any") {
+        result[key] = type;
+      } else if (type == "object") {
+        result[key] = generateSampleJsonObj(obj[key].properties);
+      } else if (type == "array") {
+        var item = generateSampleJsonObj(obj[key]);
+        result[key] = [item.items];
       }
-      return result;
-    };
+    }
+    return result;
+  };
 
-    generateSampleJson = function(obj) {
-      // either object or array
-      if (obj.type == "array") {
-        return [generateSampleJsonObj(obj).items];
-      } else if (obj.type == "object") {
-        return generateSampleJsonObj(obj.properties);
-      }
-    };
-
-    /*
-  var v = generateSampleJson(context.POST[0].params[0]);
-  console.log(JSON.stringify(v));
-  console.log("-----------------");
-  var v = generateSampleJson(context.POST[1].params[0]);
-  console.log(JSON.stringify(v));
-  */
-  //////////
+  generateSampleJson = function(obj) {
+    // either object or array
+    if (obj.type == "array") {
+      return [generateSampleJsonObj(obj).items];
+    } else if (obj.type == "object") {
+      return generateSampleJsonObj(obj.properties);
+    }
+  };
   
   
   
