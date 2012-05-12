@@ -15,25 +15,21 @@ public class AvgOperation extends StatisticalOperation
 	private int count;
 	private double total;
 
-	public AvgOperation( String valueName )
-	{
-		super( "avg", valueName );
+	public AvgOperation(String valueName) {
+		super ("avg", valueName);
 		count = 0;
 		total = 0.0;
 	}
 
 	@Override
-	public Double getResult( )
-	{
+	public Double getResult() {
 		return total / count;
 	}
 
 	@Override
-	public void process( Metric metric )
-	{
-		Double value = metric.getValues( ).get( valueName );
-		if( value != null )
-		{
+	public void process(Metric metric) {
+		Double value = metric.getValues().get(valueName);
+		if (value != null) {
 			total += value;
 			count++;
 		}

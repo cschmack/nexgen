@@ -14,7 +14,7 @@ public class SumOperation extends StatisticalOperation {
     private double sum;
 
     public SumOperation(String valueName) {
-    	super( "sum", valueName );
+    	super("sum", valueName);
     }
     
     @Override
