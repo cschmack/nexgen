@@ -42,8 +42,9 @@
     <recreate-dir dir="${build.dir}"/>
     <recreate-dir dir="${test.build.dir}"/>
     <recreate-dir dir="${coverage.build.dir}"/>
-    <recreate-dir dir="${reports.dir}"/>
     <recreate-dir dir="${dist.dir}"/>
+    <!-- just make this so we dont throw away work -->
+    <mkdir dir="${reports.dir}"/>
   </target>
 
   <target name="compile" depends="init, resolve">
