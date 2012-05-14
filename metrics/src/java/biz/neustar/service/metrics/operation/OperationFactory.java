@@ -32,7 +32,19 @@ public enum OperationFactory {
             return null; // TODO:
             //return compositeOp;
         }
-    }
+    },
+    MIN() {
+    	@Override
+        public StatisticalOperation create(String valueName) {
+            return new MinOperation(valueName);
+    	}
+    },
+    MAX() {
+    	@Override
+        public StatisticalOperation create(String valueName) {
+            return new MaxOperation(valueName);
+    	}
+    },
     ;
         
     public abstract StatisticalOperation create(String valueName);
