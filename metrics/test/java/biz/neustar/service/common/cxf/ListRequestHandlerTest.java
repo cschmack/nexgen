@@ -83,4 +83,37 @@ public class ListRequestHandlerTest {
         
         Mockito.verify(inputMessage).put(Message.QUERY_STRING, "");
     }
+    
+    //
+    
+    @Test
+    public void testUrlEncoded() {
+        ListRequestHandler handler = new ListRequestHandler();
+        Message inputMessage = Mockito.mock(Message.class);
+        
+        Mockito.when(inputMessage.get(Message.QUERY_STRING))
+            .thenReturn("contexts=source%7Bbiz.neustar.nis%7D%2Chost%7Bexample.com%7D%2chost%7Bblah.org%7D");
+                
+        ClassResourceInfo resourceClass = Mockito.mock(ClassResourceInfo.class);
+        
+        assertNull(handler.handleRequest(inputMessage, resourceClass));
+        
+        Mockito.verify(inputMessage).put(Message.QUERY_STRING, 
+                "contexts=source%7Bbiz.neustar.nis%7D&contexts=host%7Bexample.com%7D&contexts=host%7Bblah.org%7D");
+    }
+    
+    @Test
+    public void testEmptyValue() {
+        ListRequestHandler handler = new ListRequestHandler();
+        Message inputMessage = Mockito.mock(Message.class);
+        
+        Mockito.when(inputMessage.get(Message.QUERY_STRING))
+            .thenReturn("contexts&raw,stuff");
+                
+        ClassResourceInfo resourceClass = Mockito.mock(ClassResourceInfo.class);
+        
+        assertNull(handler.handleRequest(inputMessage, resourceClass));
+        
+        Mockito.verify(inputMessage).put(Message.QUERY_STRING, "contexts&raw,stuff");
+    }
 }

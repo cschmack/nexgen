@@ -33,17 +33,21 @@ public class ListRequestHandler implements RequestHandler {
         Iterable<String> params = PARAM_SPLITTER.split(queryString);
         for (String rawParam : params) {
             String param = decodeComma(rawParam);
-            int index = param.indexOf(',');
+            int commaIndex = param.indexOf(',');
+            int equalsIndex = param.indexOf('=');
             
-            while (index != -1) {
+            while (commaIndex != -1 && equalsIndex != -1 &&
+                    equalsIndex < commaIndex) {
+                
                 if (fixedParams.length() != 0) {
                     fixedParams.append(PARAM_SEP);
                 }
                 
-                String name = param.substring(0, param.indexOf('='));
-                fixedParams.append(param.substring(0, index));
-                param = name + "=" + param.substring(index + 1);
-                index = param.indexOf(',');
+                String name = param.substring(0, equalsIndex);
+                fixedParams.append(param.substring(0, commaIndex));
+                param = name + "=" + param.substring(commaIndex + 1);
+                commaIndex = param.indexOf(',');
+                equalsIndex = param.indexOf('=');
             }
             
             if (fixedParams.length() != 0) {

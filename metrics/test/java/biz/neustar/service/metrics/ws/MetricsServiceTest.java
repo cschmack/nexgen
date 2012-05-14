@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +37,7 @@ import biz.neustar.service.common.util.JettyServerUtil;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
+import biz.neustar.service.metrics.ws.model.QueryResponse;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -183,6 +185,14 @@ public class MetricsServiceTest {
         
         Response resp = client.get();
         assertEquals(200, resp.getStatus());
+        
+        
+        
+        ObjectMapper mapper = new ObjectMapper();
+        QueryResponse queryResponse = 
+                mapper.readValue((InputStream) resp.getEntity(), QueryResponse.class);
+        assertEquals(0, queryResponse.getRawDataCount());
+        //mapper.readValue(, valueType)
         // TODO: check formatting of result.
     }
     
