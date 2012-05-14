@@ -18,7 +18,8 @@ import org.apache.cxf.message.Message;
 import com.google.common.base.Splitter;
 
 public class ListRequestHandler implements RequestHandler {
-    private static Splitter PARAM_SPLITTER = Splitter.on('&');
+    private static final char PARAM_SEP = '&';
+    private static Splitter PARAM_SPLITTER = Splitter.on(PARAM_SEP);
 
     @Override
     public Response handleRequest(Message inputMessage, ClassResourceInfo resourceClass) {
@@ -27,15 +28,16 @@ public class ListRequestHandler implements RequestHandler {
         if (queryString == null) {
             return null;
         }
-        
+
         StringBuilder fixedParams = new StringBuilder();
         Iterable<String> params = PARAM_SPLITTER.split(queryString);
-        for (String param : params) {
+        for (String rawParam : params) {
+            String param = decodeComma(rawParam);
             int index = param.indexOf(',');
             
             while (index != -1) {
                 if (fixedParams.length() != 0) {
-                    fixedParams.append('&');
+                    fixedParams.append(PARAM_SEP);
                 }
                 
                 String name = param.substring(0, param.indexOf('='));
@@ -45,7 +47,7 @@ public class ListRequestHandler implements RequestHandler {
             }
             
             if (fixedParams.length() != 0) {
-                fixedParams.append('&');
+                fixedParams.append(PARAM_SEP);
             }
             
             fixedParams.append(param);
@@ -58,4 +60,8 @@ public class ListRequestHandler implements RequestHandler {
         return null; // null to not block the request
     }
 
+    
+    protected String decodeComma(String param) {
+        return param.replace("%2C", ",").replace("%2c", ",");
+    }
 }

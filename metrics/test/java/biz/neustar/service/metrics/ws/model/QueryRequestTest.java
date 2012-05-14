@@ -6,6 +6,11 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
+
+import biz.neustar.service.common.spring.ValidationUtil;
+import biz.neustar.service.metrics.ws.model.validation.QueryRequestValidator;
 
 import com.google.common.collect.ImmutableList;
 
@@ -107,8 +112,18 @@ public class QueryRequestTest {
 		teResult = queryRequest.getStartEndTimeMillis().getEnd();
 		
         assertEquals("months:", expected/1000, teResult/1000);
-
-        
+	}
+	
+	@Test
+	public void testRequestValidation_no_te() {
+	    QueryRequest req = new QueryRequest();
+	    req.setTs("-10s");
+	    req.setTe("");
+	    req.setContexts(ImmutableList.of("ctx"));
+	    QueryRequestValidator validator = new QueryRequestValidator();
+	    
+	    ValidationUtil validationUtil = new ValidationUtil();
+	    validationUtil.validate(req, validator);
 	}
 
 	@Test

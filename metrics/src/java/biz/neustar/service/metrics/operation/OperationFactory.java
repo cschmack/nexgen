@@ -21,8 +21,18 @@ public enum OperationFactory {
         public StatisticalOperation create(String valueName) {
             return new AvgOperation(valueName);
         }
+    },
+    ALL() {
+        @Override
+        public StatisticalOperation create(String valueName) {
+            CompositeOperation compositeOp = new CompositeOperation();
+            // TODO: use values[] ?
+            compositeOp.add(SUM.create(valueName));
+            compositeOp.add(AVG.create(valueName));
+            return null; // TODO:
+            //return compositeOp;
+        }
     }
-    
     ;
         
     public abstract StatisticalOperation create(String valueName);

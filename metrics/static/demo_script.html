@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+</head>
+<body>
+
+<pre>
+
+== create 1 ==
+
+
+timestamp     2012-04-04T12:34:00.000
+source        biz.neustar.nis
+host          example.com&lt;http://example.com&gt;
+from          windstream
+resource      http://www.foo.com
+values        {"range":"5.5","responseTime":"250"}
+
+
+[
+  {
+    "timestamp": "2012-04-04T12:34:00.000",
+    "source": "biz.neustar.nis",
+    "host": "example.com<http://example.com>",
+    "from": "windstream",
+    "resource": "http://www.foo.com",
+    "values": {"range":"5.5","responseTime":"250"}
+  }
+]
+
+== create 2 ==
+
+timestamp     2012-04-04T12:34:01.000
+source        biz.neustar.nis
+host          example.com&lt;http://example.com&gt;
+from          windstream
+resource      http://www.foo.com
+values        {"range":"2.5","responseTime":"100"}
+
+
+[
+  {
+    "timestamp": "2012-04-04T12:34:00.000",
+    "source": "biz.neustar.nis",
+    "host": "example.com<http://example.com>",
+    "from": "windstream",
+    "resource": "http://www.foo.com",
+    "values": {"range":"2.5","responseTime":"100"}
+  }
+]
+
+== query ==
+
+contexts=source{biz.neustar.nis},host{example.com}
+
+ts=2012-04-01T00:00:00
+metrics=range
+metrics=responseTime
+raw=true
+stats=sum
+
+
+</pre>
+
+
+</body>
+</html>

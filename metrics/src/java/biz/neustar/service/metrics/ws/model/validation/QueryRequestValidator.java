@@ -9,6 +9,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.google.common.base.Strings;
+
 import biz.neustar.service.metrics.ws.model.QueryRequest;
 
 public class QueryRequestValidator implements Validator {
@@ -43,7 +45,7 @@ public class QueryRequestValidator implements Validator {
 				
 			}
 		}
-		if (queryRequest.getTe() != null) {
+		if (!Strings.isNullOrEmpty(queryRequest.getTe())) {
 			if (!Pattern.compile(QueryRequest.TE_REGEX).matcher(queryRequest.getTe()).matches()) {
 	            try {
 	                @SuppressWarnings("unused")
@@ -51,11 +53,8 @@ public class QueryRequestValidator implements Validator {
 	            } catch (IllegalArgumentException iae) {
 	            	e.rejectValue("te", "te.parsedFailed", "te parse failure");
 	            }
-				
 			}
 		}
-		
-		
 	}
 
 }

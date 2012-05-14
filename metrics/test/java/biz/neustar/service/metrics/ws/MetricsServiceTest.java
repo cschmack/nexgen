@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -168,6 +169,23 @@ public class MetricsServiceTest {
         Response resp = client.get();
         assertEquals(200, resp.getStatus());
     }
+    
+
+    @Test
+    public void testQueryEncoded() throws JsonGenerationException, JsonMappingException, IOException {
+        String path = "/metrics/v1/query?contexts=source%7Bbiz.neustar.nis%7D%2Chost%7Bexample.com%7D&ts=2012-04-01T00%3A00%3A00&te=&raw=true&metrics=range&stats=sum";
+        URL queryUrl = new URL(location + path);
+        
+        WebClient client = WebClient.create(location)
+                .path(queryUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .type(MediaType.APPLICATION_JSON);
+        
+        Response resp = client.get();
+        assertEquals(200, resp.getStatus());
+        // TODO: check formatting of result.
+    }
+    
     
     private WebClient getClient(String relativePath) {
         return WebClient.create(location)

@@ -15,7 +15,7 @@ import biz.neustar.service.metrics.operation.OperationFactory;
 import biz.neustar.service.metrics.operation.RawRecordsOperation;
 import biz.neustar.service.metrics.operation.SumOperation;
 
-public class QueryCriteriaBuilder {
+public final class QueryCriteriaBuilder {
     
     private QueryCriteriaBuilder() {
         // purely utility
@@ -24,33 +24,31 @@ public class QueryCriteriaBuilder {
 	public static QueryCriteria buildQueryCriteria(QueryRequest query) {
 		QueryCriteria qc = new QueryCriteria( );		
 		QueryRequest.StartEndTimeMillis tstePair = query.getStartEndTimeMillis( );
-		qc.setTs( tstePair.getStart( ) );
-		qc.setTe(  tstePair.getEnd( ) );
+		qc.setTs(tstePair.getStart());
+		qc.setTe(tstePair.getEnd());
 
-		List<String> contexts = query.getContexts( );
-		for( String context : contexts )
-		{
+		List<String> contexts = query.getContexts();
+		for (String context : contexts) {
 			// TODO: This is another instance where it would be nice to have a
 			// programmatic way to
 			// retrieve the required metrics context field names.
 			ContextKVPair kvPair = new ContextKVPair( context );
-			String key = kvPair.getContextKey( );
-			if( key.equals(  Metric.FROM  ) )
-				qc.setFrom( kvPair.getContextValue( ) );
-			else if( key.equals( Metric.HOST ) )
-				qc.setHost( kvPair.getContextValue( )  );
-			else if( key.equals(  Metric.INSTANCE ) )
-				qc.setInstance( kvPair.getContextValue( )  );
-			else if( key.equals( Metric.PROCESS ) )
-				qc.setProcess( kvPair.getContextValue( )  );
-			else if( key.equals( Metric.RESOURCE ) )
-				qc.setResource( kvPair.getContextValue( ) );
-			else if( key.equals( Metric.SOURCE ) )
-				qc.setSource( kvPair.getContextValue( ) );
-			else
-			{
+			String key = kvPair.getContextKey();
+			if (key.equals( Metric.FROM )) {
+				qc.setFrom( kvPair.getContextValue());
+			} else if (key.equals( Metric.HOST)) {
+				qc.setHost( kvPair.getContextValue());
+			} else if (key.equals(  Metric.INSTANCE)) {
+				qc.setInstance( kvPair.getContextValue());
+			} else if (key.equals( Metric.PROCESS)) {
+				qc.setProcess( kvPair.getContextValue());
+			} else if (key.equals( Metric.RESOURCE)) {
+				qc.setResource( kvPair.getContextValue());
+		    } else if (key.equals( Metric.SOURCE )) {
+				qc.setSource( kvPair.getContextValue());
+			} else {
 				// This is a non-reserved context, so just stick it in the other/any field.
-				qc.addOther( key, kvPair.getContextValue( )  );
+				qc.addOther( key, kvPair.getContextValue());
 			}
 		}
 		
@@ -63,42 +61,21 @@ public class QueryCriteriaBuilder {
 		//int opsCount = 0;
 		//CompositeOperation ops = new CompositeOperation( );
 		
-		List<String> stats = query.getStats( );
-		List<String> metrics = query.getMetrics( );
-		for( String stat : stats )
-		{
+		List<String> stats = query.getStats();
+		List<String> metrics = query.getMetrics();
+		for (String stat : stats) {
 		    for (String metric : metrics) {
 		        OperationFactory opFactory = OperationFactory.find(stat);
 		        if (opFactory != null) {
 		            qc.addOperation(opFactory.create(metric));
 		        }
 		    }
-		    
-			if( stat.equalsIgnoreCase( "SUM" ) )
-			{
-				for( String metric : metrics )
-				{
-					//ops.add( new SumOperation( metric ) );
-					qc.addOperation( new SumOperation( metric ) );
-					//opsCount++;
-				}
-			}
-			else if( stat.equalsIgnoreCase( "AVG" ) )
-			{
-				for( String metric : metrics )
-				{
-					//ops.add( new SumOperation( metric ) );
-					qc.addOperation( new AvgOperation( metric ) );
-					//opsCount++;
-				}
-			}
 		}
 		
 		
-		if( query.getRaw( ) )
-		{
+		if (query.getRaw()) {
 			//ops.add(  new RawRecordsOperation( )  );
-			qc.addOperation( new RawRecordsOperation( ) );
+			qc.addOperation(new RawRecordsOperation());
 			//opsCount++;
 		}
 		
