@@ -30,11 +30,8 @@ public class RawRecordsOperation extends Operation<List<Metric>>
 	}
 
 	@Override
-	public void process( Metric metric )
-	{
-		if( !metrics.contains( metric ) )
-		{
-			metrics.add( metric );
-		}
+	public void process(Metric metric) {
+	    // TODO: we should prevent duplicates from being written, not worry about filtering
+		metrics.add(metric);
 	}
 }
