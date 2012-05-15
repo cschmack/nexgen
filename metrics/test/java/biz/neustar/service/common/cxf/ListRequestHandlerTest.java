@@ -116,4 +116,20 @@ public class ListRequestHandlerTest {
         
         Mockito.verify(inputMessage).put(Message.QUERY_STRING, "contexts&raw,stuff");
     }
+    
+
+    @Test
+    public void testCommaInName() {
+        ListRequestHandler handler = new ListRequestHandler();
+        Message inputMessage = Mockito.mock(Message.class);
+        
+        Mockito.when(inputMessage.get(Message.QUERY_STRING))
+            .thenReturn("raw,stuff=blah");
+                
+        ClassResourceInfo resourceClass = Mockito.mock(ClassResourceInfo.class);
+        
+        assertNull(handler.handleRequest(inputMessage, resourceClass));
+        
+        Mockito.verify(inputMessage).put(Message.QUERY_STRING, "raw,stuff=blah");
+    }
 }

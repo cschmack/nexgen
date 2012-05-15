@@ -35,7 +35,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import biz.neustar.service.common.util.JettyServerUtil;
-import biz.neustar.service.common.util.ToStringUtil;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
