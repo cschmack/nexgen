@@ -19,7 +19,7 @@ import com.google.common.base.Splitter;
 
 public class ListRequestHandler implements RequestHandler {
     private static final char PARAM_SEP = '&';
-    private static Splitter PARAM_SPLITTER = Splitter.on(PARAM_SEP);
+    private static final Splitter PARAM_SPLITTER = Splitter.on(PARAM_SEP);
 
     @Override
     public Response handleRequest(Message inputMessage, ClassResourceInfo resourceClass) {
