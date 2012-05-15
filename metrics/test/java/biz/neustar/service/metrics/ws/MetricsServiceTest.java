@@ -205,7 +205,7 @@ public class MetricsServiceTest {
         WebClient creationClient = getClient("metrics");
     
         Metric metric1 = new Metric();
-        metric1.setSource("biz.neustar.nis");
+        metric1.setSource("biz.neustar.nis.2");
         metric1.setHost("example.com");
         metric1.setResource("http://www.foo.com");
         metric1.setFrom("windstream");
@@ -213,7 +213,7 @@ public class MetricsServiceTest {
         metric1.setTimestamp("2012-04-01T01:00:00");
         
         Metric metric2 = new Metric();
-        metric2.setSource("biz.neustar.nis");
+        metric2.setSource("biz.neustar.nis.2");
         metric2.setHost("example.com");
         metric2.setResource("http://www.foo.com");
         metric2.setFrom("windstream");
@@ -228,7 +228,7 @@ public class MetricsServiceTest {
         assertEquals(204, creationResp.getStatus());
     
         
-        String path = "/metrics/v1/query?contexts=source%7Bbiz.neustar.nis%7D%2Chost%7Bexample.com%7D&ts=2012-04-01T00%3A00%3A00&te=&raw=true&metrics=range&stats=sum";
+        String path = "/metrics/v1/query?contexts=source%7Bbiz.neustar.nis.2%7D%2Chost%7Bexample.com%7D&ts=2012-04-01T00%3A00%3A00&te=&raw=true&metrics=range&stats=sum";
         URL queryUrl = new URL(location + path);
         
         WebClient client = WebClient.create(location)
