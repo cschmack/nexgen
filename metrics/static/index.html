@@ -398,7 +398,7 @@ $(function() {
   // after template rendering 
   $(".api-test-form").submit(function(o) {
     var target = this.dataset['target'];
-    
+    $(target).html("");
     var serializedData = "";
     var method = new String(this.method).toLowerCase();
 
