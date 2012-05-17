@@ -8,6 +8,12 @@
 
 package biz.neustar.service.metrics.operation;
 
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 
 public enum OperationFactory {
     SUM() {
@@ -46,7 +52,7 @@ public enum OperationFactory {
     	}
     },
     ;
-        
+    
     public abstract StatisticalOperation create(String valueName);
     
     /**
@@ -55,12 +61,30 @@ public enum OperationFactory {
      * @return the operation that matches the name if found, or else null.
      */
     public static OperationFactory find(String name) {
-        //this.values()[0].name()
         for (OperationFactory op : values()) {
             if (op.name().equalsIgnoreCase(name)) {
                 return op;
             }
         }
         return null;
+    }
+    
+    public static List<OperationFactory> find(List<String> names) {
+        Set<OperationFactory> opFactories = Sets.newHashSet();
+        for (OperationFactory op : values()) {
+            for (String name : names) {
+                if (name.equalsIgnoreCase("all")) {
+                    opFactories.addAll(all());
+                    break; // add everything, can stop here
+                } else if (op.name().equalsIgnoreCase(name)) {
+                    opFactories.add(op);
+                }
+            }
+        }
+        return Lists.newArrayList(opFactories);
+    }
+    
+    public static List<OperationFactory> all() {
+        return Lists.newArrayList(OperationFactory.values());
     }
 }

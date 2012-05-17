@@ -196,8 +196,6 @@ public class MetricsServiceTest {
     }
     
     
-    
-    
 
     @Test
     public void testQueryEncodedWithResults() throws Exception {

@@ -34,7 +34,7 @@ public class MetricsDAO {
     private ConcurrentSkipListMap<String, List<Metric>> metricsMap = 
             new ConcurrentSkipListMap<String, List<Metric>>();
     
-    private static Splitter KEY_SPLITTER = Splitter.on(":").trimResults();
+    //private static Splitter KEY_SPLITTER = Splitter.on(":").trimResults();
     
     public void put(Metric metric) {
 
@@ -151,6 +151,7 @@ public class MetricsDAO {
         */
     }
     
+    /**
     protected boolean isContextMatch(Map<String, Object> metricJson, 
             Map<String, Pattern> contextMatches) {
         
@@ -206,4 +207,5 @@ public class MetricsDAO {
         Iterable<String> iter = KEY_SPLITTER.split(key);
         return Iterables.get(iter, 1, "");
     }
+    **/
 }

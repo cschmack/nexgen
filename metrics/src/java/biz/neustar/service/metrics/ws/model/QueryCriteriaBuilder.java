@@ -52,31 +52,17 @@ public final class QueryCriteriaBuilder {
 			}
 		}
 		
-		// TODO: Figure out how we're actually going to determine which operations to create.  This
-		// definition conflicts with CompositeOperation.
-		// Currently we're going to support the following:
-		//		Sum
-		//		Avg
-		
-		//int opsCount = 0;
-		//CompositeOperation ops = new CompositeOperation( );
-		
-		List<String> stats = query.getStats();
-		List<String> metrics = query.getMetrics();
-		for (String stat : stats) {
-		    for (String metric : metrics) {
-		        OperationFactory opFactory = OperationFactory.find(stat);
-		        if (opFactory != null) {
-		            qc.addOperation(opFactory.create(metric));
-		        }
-		    }
-		}
+		for (String metric : query.getMetrics()) {
+	        List<OperationFactory> opFactories = 
+	                OperationFactory.find(query.getStats());
+            for (OperationFactory op : opFactories) {
+                qc.addOperation(op.create(metric));
+            }
+	    }
 		
 		
 		if (query.getRaw()) {
-			//ops.add(  new RawRecordsOperation( )  );
 			qc.addOperation(new RawRecordsOperation());
-			//opsCount++;
 		}
 		
 		/*
