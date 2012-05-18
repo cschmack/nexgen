@@ -23,78 +23,79 @@
 <script type="text/javascript">
 var context = 
 {
-  GET : [
+  links : [
     {
-      id : 'query', 
-      path : '/metrics/v1/query',
-      description : 'Query functions for stored metrics',
-      params: [ {
-        "properties":{
-          "contexts":{"type":"array", "items" : {"type" : "string"} },
-          "ts":{"type":"string"},
-          "te":{"type":"string"},
-          "raw":{"type":"boolean"},
-          "metrics":{"type":"array", "items" : {"type" : "string"} },
-          "stats":{"type":"array", "items" : {"type" : "string"} },
+         method : "GET",
+         id : "query", 
+         enctype: "application/x-www-form-urlencoded",
+         href : "/metrics/v1/query",
+         description : "Query functions for stored metrics",
+         schema : {
+           properties : {
+              "contexts":{"type":"array", "items" : {"type" : "string"} },
+              "ts":{"type":"string"},
+              "te":{"type":"string"},
+              "raw":{"type":"boolean"},
+              "metrics":{"type":"array", "items" : {"type" : "string"} },
+              "stats":{"type":"array", "items" : {"type" : "string"} },
+          },
+        },
+    },
+    {
+        method : "GET",
+        id : "version", 
+        href : "/version",
+        description : "Request the current version of the service",
+        schema : {
+          properties : {},
         }
-      },
-      ]
     },
     {
-      id : 'version', 
-      path : '/version',
-      description : 'Request the current version of the service',
-    },
-  ], 
-  POST : [
-    {
-      id : 'metrics', 
-      path : '/metrics/v1/metrics',
-      description : 'Create metrics in the metrics service',
-      params : [        
-        { "description":"list of metrics",
+        id : 'metrics', 
+        href : '/metrics/v1/metrics',
+        description : 'Create metrics in the metrics service',
+        method: "POST",
+        schema : { 
+          "description":"list of metrics",
           "type":"array",
           "items" : {
-            "type" : "object",
-            "properties":{
-              "timestamp":{"type":"string", "required": true},
-              "source":{"type":"string", "required": true},
-              "host":{"type":"string", "required" : true},
-              "from":{"type":"string"},
-              "process":{"type":"string"},
-              "instance":{"type":"string"},
-              "resource":{"type":"string"},
+              "type" : "object",
+              "properties":{
+                "timestamp":{"type":"string", "required": true},
+                "source":{"type":"string", "required": true},
+                "host":{"type":"string", "required" : true},
+                "from":{"type":"string"},
+                "process":{"type":"string"},
+                "instance":{"type":"string"},
+                "resource":{"type":"string"},
               
-              "values": {                
-                "type" : "object",
-                "properties" : { "" : {"type" : "number" } },
+                "values": {                
+                  "type" : "object",
+                  "properties" : { "" : {"type" : "number" } },
+                }
               }
-            }
-           }
-         }
-      ]
+          }
+        }
     },
     {
       id : 'config', 
-      path : '/metrics/v1/config',
+      href : '/metrics/v1/config',
+      method: "POST",
       description : 'Configure custom contexts in the metrics service',
-      params : [        
-        { "description":"context configuration",
-          "type":"object",
-          "properties":{
+      schema : { 
+        "description":"context configuration",
+        "type":"object",
+        "properties":{
             "name":{"type":"string"},
             "description":{"type":"string"},
             "contexts": { 
               "type" : "array",
               "items" : { "type" : "string" },
             }
-           }
          }
-      ]
+      }
     },
   ],
-  PUT : [],
-  DELETE : [],
 };
 </script>
 
@@ -117,34 +118,34 @@ var context =
         <script type="text/x-handlebars-template" data-context="">
         
           <li class="nav-header">CREATE / UPDATE</li>
-          {{#each POST}}
+          {{#each_method links type="POST"}}
             <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
-          {{/each}}
-          {{#each PUT}}
+          {{/each_method}}
+          {{#each_method links type="PUT"}}
             <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
-          {{/each}}
-          {{#unless PUT}}
-            {{#unless POST}}
+          {{/each_method}}
+          {{#unless_method links type="PUT"}}
+            {{#unless_method links type="POST"}}
               <li>Not supported</li>
-            {{/unless}}
-          {{/unless}}
+            {{/unless_method}}
+          {{/unless_method}}
         
         
           <li class="nav-header">READ</li>
-          {{#each GET}}
+          {{#each_method links type="GET"}}
             <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
-          {{/each}}
-          {{#unless GET}}
+          {{/each_method}}
+          {{#unless_method links type="GET"}}
             <li>Not supported</li>
-          {{/unless}}
+          {{/unless_method}}
           
           <li class="nav-header">DELETE</li>
-          {{#each DELETE}}
+          {{#each_method links type="DELETE"}}
             <li><a data-toggle="collapse" data-parent="" href="#{{this.id}}">{{this.id}}</a></li>
-          {{/each}}
-          {{#unless DELETE}}
+          {{/each_method}}
+          {{#unless_method links type="DELETE"}}
             <li>Not supported</li>
-          {{/unless}}
+          {{/unless_method}}
         </script>        
       </ul>
     </div>
@@ -156,26 +157,24 @@ var context =
     
       <script type="text/x-handlebars-template" data-context="">
 
-        {{#each POST}}
+        {{#each_method links type="POST"}}
         <div class="accordion-group">
           <div class="accordion-heading">
             <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
               <span class="badge badge-warning">POST</span>
-              {{this.path}}
+              {{this.href}}
             </a>
           </div>
           <div id="{{this.id}}" class="accordion-body collapse">
             <div class="accordion-inner"><label>{{this.description}}</label>
-              <form method="POST" action="{{this.path}}" id="form-{{this.id}}"
+              <form method="POST" action="{{this.href}}" id="form-{{this.id}}"
                   class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
                 <fieldset>
-                  <legend>POST <a href="{{this.path}}">{{this.path}}</a></legend>
+                  <legend>POST <a href="{{this.href}}">{{this.href}}</a></legend>
                   <div class="control-group">
-                    {{#each this.params}}
-                      <div class="controls">                      
-                        <textarea id="form-{{../id}}-json" rows="15" class="input-xxlarge">{{{sample_json this}}}</textarea>
-                      </div>                      
-                    {{/each}}
+                    <div class="controls">                      
+                      <textarea id="form-{{id}}-json" rows="15" class="input-xxlarge">{{{sample_json this.schema}}}</textarea>
+                    </div>
                   </div>
                 </fieldset>
                 <div class="controls">
@@ -188,37 +187,55 @@ var context =
             </div>
           </div>
         </div>
-        {{/each}}
+        {{/each_method}}
         
-        {{#each PUT}}
+        {{#each_method links type="PUT"}}
         <div class="accordion-group">
           <div class="accordion-heading">
             <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
               <span class="badge badge-warning">PUT</span>
-              {{this.path}}
+              {{this.href}}
             </a>
           </div>
           <div id="{{this.id}}" class="accordion-body collapse">
-            <div class="accordion-inner"><label>{{this.description}}</label></div>
+            <div class="accordion-inner"><label>{{this.description}}</label>
+              <form method="PUT" action="{{this.href}}" id="form-{{this.id}}"
+                  class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
+                <fieldset>
+                  <legend>PUT <a href="{{this.href}}">{{this.href}}</a></legend>
+                  <div class="control-group">
+                    <div class="controls">                      
+                      <textarea id="form-{{../id}}-json" rows="15" class="input-xxlarge">{{{sample_json this.schema}}}</textarea>
+                    </div>
+                  </div>
+                </fieldset>
+                <div class="controls">
+                  <button type="submit" class="btn">Submit</button>
+                </div>
+              </form>
+              <label>Response</label>
+              <div id="{{this.id}}-response" class="well">
+              </div>
+            </div>
           </div>
         </div>
-        {{/each}}
+        {{/each_method}}
         
-        {{#each GET}}
+        {{#each_method links type="GET"}}
         <div class="accordion-group">
           <div class="accordion-heading">
             <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
               <span class="badge badge-success">GET</span>
-              {{this.path}}
+              {{this.href}}
             </a>
           </div>
           <div id="{{this.id}}" class="accordion-body collapse">
             <div class="accordion-inner">
               <label>{{this.description}}</label>
-              <form method="GET" action="{{this.path}}" class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
-                <label>GET <a href="{{this.path}}">{{this.path}}</a></label>
-                {{#each this.params}}
-                  {{#each_entry this.properties}}
+              <form method="GET" action="{{this.href}}" class="api-test-form form-horizontal" data-target="#{{this.id}}-response">
+                <label>GET <a href="{{this.href}}">{{this.href}}</a></label>
+
+                  {{#each_entry this.schema.properties}}
                   <label class="control-label" for="input-{{this._index}}">{{this._key}}</label>
                   <div class="controls">
                     <input id="input-{{this._index}}" name="{{this._key}}" 
@@ -226,7 +243,7 @@ var context =
                     <p class="help-inline">{{this._value.type}}</p>
                   </div>
                   {{/each_entry}}
-                {{/each}}
+
                 <button type="submit" class="btn">Submit</button>
               </form>
               <label>Response</label>
@@ -235,21 +252,21 @@ var context =
             </div>
           </div>
         </div>
-        {{/each}}
+        {{/each_method}}
         
-        {{#each DELETE}}
+        {{#each_method links type="DELETE"}}
         <div class="accordion-group">
           <div class="accordion-heading">
             <a class="no-hover-underline accordion-toggle" data-toggle="collapse" data-parent="" href="#{{this.id}}">
               <span class="badge badge-info">DELETE</span>
-              {{this.path}}
+              {{this.href}}
             </a>
           </div>
           <div id="{{this.id}}" class="accordion-body collapse">
             <div class="accordion-inner">
               <label>{{this.description}}</label>
-              <form method="DELETE" action="{{this.path}}" class="api-test-form" data-target="#{{this.id}}-response">
-                <label>DELETE <a href="{{this.path}}">{{this.path}}</a></label>
+              <form method="DELETE" action="{{this.href}}" class="api-test-form" data-target="#{{this.id}}-response">
+                <label>DELETE <a href="{{this.href}}">{{this.href}}</a></label>
                 <button type="submit" class="btn">Submit</button>
               </form>
               <label>Response</label>
@@ -258,7 +275,7 @@ var context =
             </div>
           </div>
         </div>
-        {{/each}}
+        {{/each_method}}
         
       </script>
     </div>      
@@ -336,12 +353,48 @@ $(function() {
       JSON.stringify(generateSampleJson(obj), null, 2));
   });
   
+  // Sample: {{each_method links type="GET"}}
+  Handlebars.registerHelper('each_method', function(links, options) {
+    var result = "";
+    var index = 0;
+    
+    var methodType = options.hash['type'] || "";
+    for (var i = 0; i < links.length; i++) {
+      if (methodType.length == 0 || methodType == links[i].method) {
+        var item = links[i];
+        item._index = i;
+        result += options.fn(item);
+      }
+    }
+    return result;
+  });
+
+  // Sample: {{unless_method links type="GET"}}
+  // if there are no methods matching, then the html enclosed is rendered
+  Handlebars.registerHelper('unless_method', function(links, options) {
+    var result = "";
+    var index = 0;
+    
+    var methodType = options.hash['type'] || "";
+    var found = false;
+    for (var i = 0; i < links.length; i++) {
+      if (methodType.length != 0 && methodType == links[i].method) {
+        found = true;
+      }
+    }
+    if (!found) {
+      result += options.fn(this);
+    }
+    return result;
+  });
+  
+  
   Handlebars.registerHelper('each_entry', function(obj, options) {
     var result = "";
     var index = 0;
     for (var k in obj) {
       this._index = index;
-      this._key = k
+      this._key = k;
       this._value = obj[k];
 //      console.log("key: " + this._key + " value: " + this._value);
       result += options.fn(this);
@@ -397,31 +450,39 @@ $(function() {
   
   // after template rendering 
   $(".api-test-form").submit(function(o) {
-    var target = this.dataset['target'];
-    $(target).html("");
-    var serializedData = "";
-    var method = new String(this.method).toLowerCase();
+    try {
+      var target = this.dataset['target'];
+      $(target).html("");
+      var serializedData = "";
+      var method = new String(this.method).toLowerCase();
 
-    if (method == "post" || method == "put") {
-      // if it's a POST or PUT serialize to JSON
-      var textArea = '#' + $(this).attr('id') + '-json';
-      serializedData = $(textArea)[0].value;
-    } else {
-      serializedData = $(this).serialize();
-    }
+      if (method == "post" || method == "put") {
+        // if it's a POST or PUT serialize to JSON
+        var textArea = '#' + $(this).attr('id') + '-json';
+        serializedData = $(textArea)[0].value;
+      } else {
+        serializedData = $(this).serialize();
+      }
     
-    $.ajax({
-      url: this.action,
-      type: this.method,
-      contentType: 'application/json',
-      data: serializedData,
-    }).done(function(data, textStatus, req) {
-      $(target).html(req.status + " " + req.statusText + "<br/>" +
-            "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
-    }).fail(function(req) {
-      $(target).html("Request Error: " + req.status + " " + req.statusText + "<br/>");
-    });
-    return false;
+      $.ajax({
+        url: this.action,
+        type: this.method,
+        contentType: 'application/json',
+        data: serializedData,
+      }).done(function(data, textStatus, req) {
+        $(target).html(req.status + " " + req.statusText + "<br/>" +
+              "<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+      }).fail(function(req) {
+      
+        $(target).html("Request Error: " + req.status + " " + 
+          req.statusText + "<br/>" +
+          req.responseText + "<br/>");
+      });
+      return false;
+    } catch (e) { 
+      console.log(e); 
+      return false; 
+    }
   });
   
   
