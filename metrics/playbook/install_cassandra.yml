@@ -20,4 +20,14 @@
     action: command apt-get -y update
   - name: install cassandra
     action: command apt-get -y install cassandra
+    notify:
+    - restart cassandra
+  - name: install cassandra configuration
+    action: copy src=cassandra.yaml dest=/etc/cassandra/cassandra.yaml mode=644
+  - name: update directory permissions
+    action: file path=/var/db/cassandra owner=cassandra group=cassandra state=directory
+  handlers:
+  - name: restart cassandra
+    action: service name=cassandra state=restarted
+
 
