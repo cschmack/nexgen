@@ -38,6 +38,7 @@ if [ "$JVM_OPTS" == "" ]; then
     JVM_OPTS="$JVM_OPTS -XX:SurvivorRatio=8"
     JVM_OPTS="$JVM_OPTS -XX:MaxTenuringThreshold=31"
     JVM_OPTS="$JVM_OPTS -XX:+UseCompressedStrings -XX:+UseStringCache"
+    JVM_OPTS="$JVM_OPTS -XX:ErrorFile=/var/log/$APP_NAME/java_error_%p.log"
 fi
 
 
