@@ -1,0 +1,23 @@
+---
+- hosts: metrics.service.cassandra
+  vars:
+  user: ubuntu
+  sudo: True
+  tasks:
+  - name: add cassandra deb
+    action: shell echo "deb http://www.apache.org/dist/cassandra/debian 11x main\ndeb-src http://www.apache.org/dist/cassandra/debian 11x main" > /etc/apt/sources.list.d/cassandra.list
+  - name: get cassandra deb keys
+    action: command gpg --keyserver pgp.mit.edu --recv-keys $item 
+    with_items:
+      - F758CE318D77295D
+      - 2B5C1B00 
+  - name: install cassandra deb keys
+    action: shell gpg --export --armor $item | apt-key add -
+    with_items:
+      - F758CE318D77295D
+      - 2B5C1B00 
+  - name: update apt for cassandra
+    action: command apt-get -y update
+  - name: install cassandra
+    action: command apt-get -y install cassandra
+

@@ -3,3 +3,6 @@
 127.0.0.1
 
 
+[metrics.service.cassandra]
+127.0.0.1
+
