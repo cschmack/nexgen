@@ -12,11 +12,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,11 +38,11 @@ import biz.neustar.service.common.util.JettyServerUtil;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.ws.model.ContextConfig;
 import biz.neustar.service.metrics.ws.model.Metric;
+import biz.neustar.service.metrics.ws.model.QueryResponse;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -169,7 +170,88 @@ public class MetricsServiceTest {
                 .query("metrics", "responseTime")
                 .query("raw", "true");
         Response resp = client.get();
-        //assertEquals(200, resp.getStatus());
+        assertEquals(200, resp.getStatus());
+    }
+    
+
+    @Test
+    public void testQueryEncoded() throws JsonGenerationException, JsonMappingException, IOException {
+        String path = "/metrics/v1/query?contexts=source%7Bbiz.neustar.nis%7D%2Chost%7Bexample.com%7D&ts=2012-04-01T00%3A00%3A00&te=&raw=true&metrics=range&stats=sum";
+        URL queryUrl = new URL(location + path);
+        
+        WebClient client = WebClient.create(location)
+                .path(queryUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .type(MediaType.APPLICATION_JSON);
+        
+        Response resp = client.get();
+        assertEquals(200, resp.getStatus());
+        
+        
+        
+        ObjectMapper mapper = new ObjectMapper();
+        QueryResponse queryResponse = 
+                mapper.readValue((InputStream) resp.getEntity(), QueryResponse.class);
+        assertEquals(0, queryResponse.getRawDataCount());
+    }
+    
+    
+
+    @Test
+    public void testQueryEncodedWithResults() throws Exception {
+        WebClient creationClient = getClient("metrics");
+    
+        Metric metric1 = new Metric();
+        metric1.setSource("biz.neustar.nis.2");
+        metric1.setHost("example.com");
+        metric1.setResource("http://www.foo.com");
+        metric1.setFrom("windstream");
+        metric1.getValues().put("range", 5.3);
+        metric1.setTimestamp("2012-04-01T01:00:00");
+        
+        Metric metric2 = new Metric();
+        metric2.setSource("biz.neustar.nis.2");
+        metric2.setHost("example.com");
+        metric2.setResource("http://www.foo.com");
+        metric2.setFrom("windstream");
+        metric2.getValues().put("range", 4.7);
+        
+        metric2.setTimestamp("2012-04-01T02:00:00");
+        
+        
+        List<Metric> testData = Lists.newArrayList(metric1, metric2);
+        ObjectMapper mapper = new ObjectMapper();
+        Response creationResp = creationClient.post(mapper.writeValueAsBytes(testData));
+        assertEquals(204, creationResp.getStatus());
+    
+        
+        String path = "/metrics/v1/query?contexts=source%7Bbiz.neustar.nis.2%7D%2Chost%7Bexample.com%7D&ts=2012-04-01T00%3A00%3A00&te=&raw=true&metrics=range&stats=sum";
+        URL queryUrl = new URL(location + path);
+        
+        WebClient client = WebClient.create(location)
+                .path(queryUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .type(MediaType.APPLICATION_JSON);
+        
+        Response resp = client.get();
+        assertEquals(200, resp.getStatus());
+        
+        QueryResponse queryResponse = 
+                mapper.readValue((InputStream) resp.getEntity(), QueryResponse.class);
+        assertEquals(2, queryResponse.getRawDataCount());
+        // metric values
+        List<Metric> rawMetrics = queryResponse.getRawData();
+        assertEquals(2, rawMetrics.size());
+        assertEquals(metric1, rawMetrics.get(0));
+        assertEquals(metric2, rawMetrics.get(1));
+        
+        // check stats
+        Map<String, Map<String, Double>> statsMap = queryResponse.getStatistics();
+        assertEquals(1, statsMap.size());
+        Map<String, Double> rangeStats = statsMap.get("range");
+        assertNotNull(rangeStats);
+        assertEquals(10.0, rangeStats.get("sum"), 0.001);
+        
     }
     
     private WebClient getClient(String relativePath) {

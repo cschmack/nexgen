@@ -15,6 +15,10 @@ import java.util.Map;
 import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -40,6 +44,7 @@ import biz.neustar.service.common.cxf.SpringJaxrsServlet;
 import biz.neustar.service.common.spring.PropertySourcesUtil;
 import biz.neustar.service.metrics.ws.MetricsService;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper;
 import com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper;
@@ -61,6 +66,8 @@ public class AppConfig {
     @Value("${app.serverMaxThreadPool}")
     private int serverMaxThreadPool;
     
+    @Value("${app.staticPath}")
+    private String staticPath;
     
     public int getServerPort() {
         return serverPort;
@@ -105,6 +112,22 @@ public class AppConfig {
         return new AnnotationAwareAspectJAutoProxyCreator();
     }
     
+    @Bean
+    public String staticPath() {
+        StringBuilder path = new StringBuilder();
+        String appHome = System.getenv("APP_HOME");
+        if (appHome == null) {
+            path.append('.');
+        } else {
+            path.append(appHome);
+        }
+        if (!staticPath.startsWith("/")) {
+            path.append("/");
+        }
+        path.append(staticPath);
+        return path.toString().replace("//", "/");
+    }
+    
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server getServer() {
         LOGGER.debug("initializing server");
@@ -112,16 +135,36 @@ public class AppConfig {
         server.setSendServerVersion(false);
         server.setThreadPool(new QueuedThreadPool(serverMaxThreadPool));
         
+        // static content
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(false);
+        resourceHandler.setResourceBase(staticPath());
+        LOGGER.debug("resource base: {} ", resourceHandler.getResourceBase());
+        ContextHandler ctxHandler = new ContextHandler();
+        ctxHandler.setContextPath("/");
+        ctxHandler.setHandler(resourceHandler);
+        
+        // servlet context
         ServletContextHandler context =
                 new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(servletHolder(), "/*"); // hand everything off to the CXF and let it map the paths
         context.addFilter(gzipFilter(), "/*", 
                 EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
-        server.setHandler(context);
+
+        // set of handlers
+        //ContextHandlerCollection handlers = new ContextHandlerCollection();
+        HandlerList handlers = new HandlerList();
+        //handlers.addHandler(ctxHandler);
+        handlers.addHandler(resourceHandler);
+        handlers.addHandler(context);
+        
+        server.setHandler(handlers);
+        
         server.setStopAtShutdown(true);
         return server;
     }
+    
     
     @Bean
     public FilterHolder gzipFilter() {
@@ -144,7 +187,10 @@ public class AppConfig {
     public SpringJaxrsServlet springJaxrsServlet() {
         SpringJaxrsServlet servlet = new SpringJaxrsServlet();
         // add the jackson json providers
-        servlet.addProvider(new JacksonJsonProvider());
+        JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+        jsonProvider.configure(
+                SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        servlet.addProvider(jsonProvider);
         servlet.addProvider(new JsonMappingExceptionMapper());
         servlet.addProvider(new JsonParseExceptionMapper());
         return servlet;

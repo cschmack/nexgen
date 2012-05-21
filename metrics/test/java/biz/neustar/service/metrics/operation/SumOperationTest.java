@@ -27,6 +27,20 @@ public class SumOperationTest {
         assertEquals((double) 3.0, op.getResult(), 0.1);
     }
 
+    
+    @Test
+    public void testSumAgain() {
+        SumOperation op = new SumOperation("foo");
+        Metric metric = new Metric();
+        metric.getValues().put("foo", 5.3);
+        op.process(metric);
+        metric.getValues().clear();
+        metric.getValues().put("foo", 4.7);
+        op.process(metric);
+        assertEquals((double) 10.0, op.getResult(), 0.001);
+    }
+
+    
     @Test
     public void testWrongValueSum() {
         SumOperation op = new SumOperation("foo");

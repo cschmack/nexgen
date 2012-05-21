@@ -12,9 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Before;
@@ -29,8 +26,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import biz.neustar.service.metrics.config.AppConfig;
 import biz.neustar.service.metrics.operation.Operation;
 import biz.neustar.service.metrics.operation.SumOperation;
-
-import com.google.common.collect.Maps;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=AppConfig.class, loader=AnnotationConfigContextLoader.class)
@@ -67,15 +62,21 @@ public class MetricDAOTest {
         metricsDAO.put(metric);
         
         Operation op = Mockito.mock(Operation.class);
-        
-        metricsDAO.apply(op, 
-                0, (new Date()).getTime(), Pattern.compile("tests\\.foo"));
+                
+        QueryCriteria qc1 = new QueryCriteria( 0, (new Date( )).getTime() );
+        qc1.setFrom( "tests" );
+        qc1.addOperation( op );
+        metricsDAO.apply( qc1 );
         Mockito.verify(op, Mockito.times(1)).apply(metric);
         
         // try regex
         Operation op2 = Mockito.mock(Operation.class);
-        metricsDAO.apply(op2, 
-                0, (new Date()).getTime(), Pattern.compile("tests.*"));
+        
+        
+        QueryCriteria qc2 = new QueryCriteria( 0, (new Date( )).getTime( ) );
+        qc2.setFrom( "tests.*"  );
+        qc2.addOperation( op2 );
+        metricsDAO.apply( qc2 );
         Mockito.verify(op2, Mockito.times(1)).apply(metric);
     }
 
@@ -99,7 +100,11 @@ public class MetricDAOTest {
         }
 
         SumOperation op = new SumOperation("foo");
-        metricsDAO.apply(op, 0, (new Date()).getTime(),Pattern.compile("tests.*"));
+        //metricsDAO.apply(op, 0, (new Date()).getTime(),Pattern.compile("tests.*"));
+        QueryCriteria qc = new QueryCriteria( 0, (new Date( ).getTime( ) ) );
+        qc.setFrom( "tests.*"  );
+        qc.addOperation( op );
+        metricsDAO.apply( qc );
         assertEquals(3.2, op.getResult(), 0.01);
     }
     
@@ -124,11 +129,12 @@ public class MetricDAOTest {
         
         // try regex
         Operation op2 = Mockito.mock(Operation.class);
-        Map<String, Pattern> contextMatch = Maps.newHashMap();
-        contextMatch.put("something", Pattern.compile("else"));
-        metricsDAO.apply(op2, 
-                0, (new Date()).getTime(), Pattern.compile("tests.*"),
-                contextMatch);
+               
+        QueryCriteria qc = new QueryCriteria( 0, (new Date( )).getTime( ) );
+        qc.addOther( "something", "else" );
+        qc.addOperation( op2 );
+        metricsDAO.apply( qc );
+        
         Mockito.verify(op2, Mockito.times(1)).apply(metric1);
     }
 }

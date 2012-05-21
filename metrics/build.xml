@@ -39,11 +39,11 @@
 
   <target name="init" depends="">
     <tstamp/>
-    <delete dir="${build.dir}"/>
-    <mkdir dir="${build.dir}"/>
-    <delete dir="${test.build.dir}"/>
-    <mkdir dir="${test.build.dir}"/>
-    <mkdir dir="${coverage.build.dir}"/>
+    <recreate-dir dir="${build.dir}"/>
+    <recreate-dir dir="${test.build.dir}"/>
+    <recreate-dir dir="${coverage.build.dir}"/>
+    <recreate-dir dir="${dist.dir}"/>
+    <!-- just make this so we dont throw away work -->
     <mkdir dir="${reports.dir}"/>
   </target>
 
@@ -108,6 +108,9 @@
     <copy includeemptydirs="false" todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}/runtime"/>
     </copy>
+    <copy includeemptydirs="false" todir="${dist.dir}/static">
+      <fileset dir="${basedir}/static"/>
+    </copy>
 
 
     <jar jarfile="${dist.dir}/lib/${ant.project.name}.jar">
@@ -122,7 +125,7 @@
     </jar>
     <tar destfile="${dist.dir}/${ant.project.name}.tgz"
          basedir="${dist.dir}"
-         includes="lib/**,bin/**,conf/**"
+         includes="lib/**,bin/**,conf/**,static/**"
          compression="gzip" />
   </target>
 
@@ -140,7 +143,7 @@
   </target>
 
   <target name="test-stories-only" depends="" description="run unit and story tests">
-    <test-stories>
+    <test-stories color="yes">
       <junit-classpath>
         <pathelement location="${test.base.dir}"/>
       </junit-classpath>

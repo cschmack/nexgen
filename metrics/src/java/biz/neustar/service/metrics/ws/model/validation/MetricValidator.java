@@ -32,9 +32,11 @@ public class MetricValidator implements Validator {
 	public void validate(Object obj, Errors e) {
 		Metric metric = (Metric)obj;
 
-		ValidationUtils.rejectIfEmptyOrWhitespace(e, "from", "from.empty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(e, "source", "source.empty");
 		ValidationUtils.invokeValidator(timeValidator, metric.getTimestamp(), e);
+
+		// required context
+		ValidationUtils.rejectIfEmptyOrWhitespace(e, Metric.FROM, "from.empty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(e, Metric.SOURCE, "source.empty");
 		
 		Map<String, Object> any = metric.any();
 		// check for extra 

@@ -137,14 +137,8 @@
           <!-- user configuration properties -->              
           <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
 
-          <arg value="--format"/>
-          <arg value="junit:${reports.dir}/stories/cuke-report.xml"/>
-          <arg value="--format"/>
-          <arg value="pretty"/>
-          <arg value="${cuke.color}"/>
-          <arg value="--glue"/>
-          <arg value="biz.neustar.service.metrics"/>
-          <arg value="${test.base.dir}/stories"/>
+          <arg 
+            line="--format junit:${reports.dir}/stories/cuke-report.xml --format pretty ${cuke.color} --glue biz.neustar.service.metrics ${test.base.dir}/stories"/>
       </java>
 
       <junitreport todir="${reports.dir}/stories">

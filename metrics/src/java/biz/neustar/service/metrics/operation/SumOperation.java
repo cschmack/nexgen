@@ -8,14 +8,12 @@
 
 package biz.neustar.service.metrics.operation;
 
-import biz.neustar.service.metrics.ws.model.Metric;
 
-public class SumOperation extends Operation<Double> {
+public class SumOperation extends StatisticalOperation {
     private double sum;
-    private final String valueName;
 
     public SumOperation(String valueName) {
-        this.valueName = valueName;
+    	super("sum", valueName);
     }
     
     @Override
@@ -24,10 +22,7 @@ public class SumOperation extends Operation<Double> {
     }
 
     @Override
-    public void process(Metric metric) {
-        Double value = metric.getValues().get(valueName);
-        if (value != null) {
-            sum += value;
-        }
+    public void process(Double metricValue) {
+        sum += metricValue;
     }
 }

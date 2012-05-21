@@ -34,6 +34,15 @@ public class MetricTest {
     }
     
     @Test
+    public void tesNottEquals() {
+        Metric m1 = new Metric();
+        Metric m2 = new Metric();
+        m1.setFrom("from1");
+        m2.setFrom("from2");
+        assertFalse(m1.equals(m2));
+    }
+    
+    @Test
     public void testEqualsFilledOut() {
         Metric m1 = new Metric();
         m1.setFrom("from");

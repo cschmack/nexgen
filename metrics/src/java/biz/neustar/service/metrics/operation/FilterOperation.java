@@ -24,6 +24,7 @@ public abstract class FilterOperation extends Operation<Void> {
         nextOperation = next;
     }
     
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
     @Override
     public Void getResult() {
         return null;

@@ -15,6 +15,7 @@ import biz.neustar.service.metrics.ws.model.Metric;
 public abstract class Operation<T /* result type */> 
         implements Function<Metric, Void> {
 
+	protected String name;
     
     public abstract T getResult();
     
@@ -25,4 +26,14 @@ public abstract class Operation<T /* result type */>
         process(metric);
         return null;
     }
+
+	public String getName( )
+	{
+		return name;
+	}
+
+	public void setName( String name )
+	{
+		this.name = name;
+	}
 }

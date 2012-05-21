@@ -1,0 +1,18 @@
+
+{
+  GET : [
+    {
+      name : 'query', 
+      path : '/metrics/v1/query',
+      description : 'Query functions for stored metrics',
+    },
+    {
+      name : 'version', 
+      path : '/version',
+      description : 'Request the current version of the service',
+    },
+  ], 
+  POST : [],
+  PUT : [],
+  DELETE : [],
+}
