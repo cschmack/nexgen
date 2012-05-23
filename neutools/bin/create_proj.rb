@@ -14,7 +14,7 @@ puts "Creating project template..."
 class CreateProj
   
   TEMPLATE_DIR='templates'
-  DEFAULT_TEMPLATE = 'paas_service'
+  DEFAULT_TEMPLATE = 'paas_spring_service'
   SCRIPT_DIR = File.dirname(File.expand_path(__FILE__))
 
 
