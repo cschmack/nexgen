@@ -21,8 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
 import org.springframework.jmx.support.MBeanServerFactoryBean;
@@ -30,7 +28,6 @@ import org.springframework.validation.Validator;
 
 import biz.neustar.service.common.cxf.JacksonProviders;
 import biz.neustar.service.common.cxf.SpringJaxrsServlet;
-import biz.neustar.service.common.spring.PropertySourcesUtil;
 import biz.neustar.service.common.util.JettyServerUtil;
 import biz.neustar.service.metrics.ws.MetricsService;
 
@@ -62,15 +59,7 @@ public class AppConfig {
     	return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
     }
     
-    /*
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer pspc(StandardEnvironment env) {
-        PropertySourcesPlaceholderConfigurer propertyConfigurer = new PropertySourcesPlaceholderConfigurer();
-        propertyConfigurer.setPropertySources(PropertySourcesUtil.reorderPropertySources(env));
-        return propertyConfigurer;
-    }*/
-    
-    
+  
     /* maybe?
     @Bean
     public PlatformTransactionManager transactionManager() {
