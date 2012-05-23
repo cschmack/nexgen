@@ -6,7 +6,7 @@
  * of their respective owners.
  */
 
-package biz.neustar.service.metrics;
+package biz.neustar.service.common.spring;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -21,29 +21,57 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.google.common.util.concurrent.Service.State;
 
-public class DaemonTest {
+public class SpringDaemonTest {
     
     @Test
     public void testStartup() throws InterruptedException {
-        Daemon.main(new String[] {});
-        Daemon daemon = Daemon.getMainDaemon();
-        while (daemon == null) {
-            daemon = Daemon.getMainDaemon();
-            Thread.yield();
-        }
-        assertNotNull(daemon);
+        SpringDaemon daemon = new SpringDaemon();
         daemon.startAndWait();
-        
+        Thread.yield();
+
         TimeUnit.SECONDS.sleep(1);
+        
         assertTrue(daemon.isRunning());
         daemon.stopAndWait();
         assertFalse(daemon.isRunning());
     }
     
     @Test
+    public void testStopDuringStartedCallback() {
+        final AtomicReference<Thread> threadRef = new AtomicReference<Thread>();
+        final SpringDaemon daemon = new SpringDaemon() {
+            @Override
+            protected void afterSpringStarted(
+                    AnnotationConfigApplicationContext appCtx) throws Exception {
+                threadRef.set(Thread.currentThread());
+                this.triggerShutdown();
+            }
+        };
+        Thread.yield();
+        State state = daemon.startAndWait();
+        Thread.yield();
+        assertTrue(State.RUNNING == state);
+        assertTrue(daemon.isRunning());
+        try {
+            while (threadRef.get() == null) {
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            fail();
+        }
+        try {
+            while (threadRef.get().isAlive()) {
+                TimeUnit.MILLISECONDS.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            fail();
+        }
+    }
+    
+    @Test
     public void testInterruption() {
         final AtomicReference<Thread> threadRef = new AtomicReference<Thread>();
-        Daemon daemon = new Daemon() {
+        SpringDaemon daemon = new SpringDaemon() {
             @Override
             protected void afterSpringStarted(
                     AnnotationConfigApplicationContext appCtx) throws Exception {

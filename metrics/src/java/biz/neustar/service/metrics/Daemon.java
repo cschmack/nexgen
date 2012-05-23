@@ -8,81 +8,27 @@
 
 package biz.neustar.service.metrics;
 
-import java.util.TimeZone;
-import java.util.concurrent.CountDownLatch;
-
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import biz.neustar.service.common.spring.SpringDaemon;
+
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
 
 /** TBD Fill me in **/
 
-public class Daemon extends AbstractExecutionThreadService {
+public class Daemon extends SpringDaemon {
     private static final Logger LOGGER = LoggerFactory.getLogger(Daemon.class);
-    private AnnotationConfigApplicationContext appCtx;
-    private final CountDownLatch stopLatch = new CountDownLatch(1);
     
     @Override
-    protected void run() throws Exception {
-        appCtx = new AnnotationConfigApplicationContext();
-        appCtx.scan("biz.neustar.service");
-        appCtx.refresh();
-        appCtx.registerShutdownHook();
+    protected void afterSpringStarted(
+            AnnotationConfigApplicationContext appCtx) throws Exception {
         Server jettyServer = appCtx.getBean(Server.class);
         Preconditions.checkState(jettyServer.isStarted(), "Error in starting jetty");
-        waitWhileRunning();
     }
     
-    @Override
-    protected void shutDown() throws Exception {
-        LOGGER.info("stop requested, shutting down.");
-        appCtx.close();
-        
-    }
-    
-    @Override
-    protected void triggerShutdown() {
-        stopLatch.countDown();
-    }
-    
-    private void waitWhileRunning() {
-        LOGGER.debug("Should be started, and now wait if running: {}", isRunning());
-        // wait for closing..
-        try {
-            LOGGER.info("Metrics Service Started");
-            stopLatch.await();
-            LOGGER.debug("Stop signal received");
-        } catch (InterruptedException e) {
-            LOGGER.error("stop latch interrupted", e);
-        }
-    }
-    
-    public static Daemon createDeamon(String[] args) {
-        // just setup some default stuff..
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-        
-        final Daemon daemon = new Daemon();
-        
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (daemon.isRunning()) {
-                    try {
-                        LOGGER.debug("JVM is shutting down, kill the daemon");
-                        daemon.stopAndWait();
-                    } catch (Exception e) {
-                        LOGGER.error("Error on shutdown", e);
-                    }
-                }
-            }
-        }));
-        
-        return daemon;
-    }
     
     private static volatile Daemon mainDaemon = null;
     static Daemon getMainDaemon() {
@@ -91,7 +37,7 @@ public class Daemon extends AbstractExecutionThreadService {
     
     public static void main(String[] args) {
         LOGGER.info("starting metrics service...");
-        Daemon daemon = Daemon.createDeamon(args);
+        Daemon daemon = new Daemon();
         mainDaemon = daemon; // for testing purposes.
         State state = daemon.startAndWait();
         Preconditions.checkState(State.RUNNING == state);
