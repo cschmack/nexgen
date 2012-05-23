@@ -16,7 +16,6 @@ import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -153,9 +152,7 @@ public class AppConfig {
                 EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
 
         // set of handlers
-        //ContextHandlerCollection handlers = new ContextHandlerCollection();
         HandlerList handlers = new HandlerList();
-        //handlers.addHandler(ctxHandler);
         handlers.addHandler(resourceHandler);
         handlers.addHandler(context);
         
