@@ -1,0 +1,41 @@
+<ivysettings>
+  <!-- to include this add: ivy:configure file="lib/ivy/ivysettings.xml" -->
+
+  <typedef name="svn" classname="fm.last.ivy.plugins.svnresolver.SvnResolver"/>
+  <property name="nexus.url" value="http://stulhdebuild3.ultra.neustar.com:8081/nexus"/>
+
+  <properties file="${ivy.settings.dir}/runtime_ivysettings.properties" />
+  <caches defaultCacheDir="${default.cache.dir}"/>
+
+  <resolvers>
+    <!-- neustar nexus --> 
+    <ibiblio name="biz.neustar" root="${nexus.url}/content/groups/public/"  m2compatible="true">
+    </ibiblio>
+
+    <url name="releases" m2compatible="true">
+      <artifact pattern="${nexus.url}/content/repositories/releases/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+      <ivy pattern="${nexus.url}/content/repositories/releases/[organisation]/[module]/[revision]/ivy.xml"/>
+    </url>
+
+    <url name="snapshots"  m2compatible="true">
+      <artifact pattern="${nexus.url}/content/repositories/snapshots/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+      <ivy pattern="${nexus.url}/content/repositories/snapshots/[organisation]/[module]/[revision]/ivy.xml"/>
+    </url>
+
+    <chain name="neustar" returnFirst="true">
+      <resolver ref="releases"/>
+      <resolver ref="biz.neustar"/>
+    </chain>
+
+    <filesystem name="localjars">
+      <artifact pattern="${basedir}/lib/[artifact]-[revision].[ext]" />
+      <artifact pattern="${basedir}/lib/[artifact].[ext]" />
+    </filesystem>
+  </resolvers>
+
+  <settings defaultResolver="neustar"/>
+  <modules>
+    <module organisation="*" name="ivyresolver" resolver="neustar"/>
+  </modules>
+</ivysettings>
+

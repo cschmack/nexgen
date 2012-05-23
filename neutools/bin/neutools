@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+TOOL_PATH=`dirname $0`
+TOOL=$TOOL_PATH"/"$1".rb"
+
+
+if [ ! -e $TOOL ]; then
+  exec "$TOOL_PATH/jruby" $TOOL_PATH"/tools_help.rb" $TOOL_PATH
+else
+  exec "$TOOL_PATH/jruby" $TOOL $@
+fi

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project name="<%= proj_name %>" default="dist"  xmlns:ivy="antlib:org.apache.ivy.ant">
+  <description>
+        This project does XYZ FILL ME IN!
+  </description>
+
+  <property environment="env"/>
+  <property name="dist.dir" location="${basedir}/dist" />
+  <property name="reports.dir" location="${basedir}/reports" />
+  
+  <property name="config.dir" location="${basedir}/conf" />
+  <property name="bin.dir" location="${basedir}/bin" />
+  <property name="lib.dir" location="${basedir}/lib" />
+  
+  <!-- sources -->
+  <property name="src.dir" location="${basedir}/src/java" />
+  <property name="test.dir" location="${basedir}/test/java" />
+    
+  <!-- build dirs -->
+  <property name="build.dir" value="${basedir}/build/classes"/>
+  <property name="test.build.dir" value="${basedir}/build/test"/>
+  <property name="coverage.build.dir" value="${basedir}/build/coverage"/>
+
+
+  <import file="${basedir}/lib/ivy/common.xml" />
+
+  <path id="compile.classpath">
+    <fileset dir="${lib.dir}/compile" includes="*.jar"/>
+  </path>
+
+  <path id="test.classpath">
+    <fileset dir="${lib.dir}/test" includes="*.jar"/>
+  </path>
+
+  <target name="init" depends="">
+    <tstamp/>
+    <delete dir="${build.dir}"/>
+    <mkdir dir="${build.dir}"/>
+    <delete dir="${test.build.dir}"/>
+    <mkdir dir="${test.build.dir}"/>
+    <mkdir dir="${coverage.build.dir}"/>
+    <mkdir dir="${reports.dir}"/>
+  </target>
+
+  <target name="compile" depends="init, resolve">
+    <javac debug="yes" destdir="${build.dir}" srcdir="${src.dir}" includeantruntime="false">
+      <include name="**/*.java" />
+      <classpath>
+        <path refid="compile.classpath"/>
+        <pathelement location="${config.dir}" />
+      </classpath>
+    </javac>
+  </target>
+
+
+  <target name="compile-tests" depends="compile">
+    <javac debug="yes" destdir="${test.build.dir}" srcdir="${test.dir}" includeantruntime="false">
+      <include name="**/*.java" />
+      <classpath>
+        <path refid="test.classpath"/>
+        <pathelement location="${config.dir}" />
+        <pathelement location="${build.dir}" />
+      </classpath>
+    </javac>
+  </target>
+
+
+  <target name="dist" depends="compile">
+    <copy includeemptydirs="false" todir="${dist.dir}/conf">
+      <fileset dir="${config.dir}"/>
+    </copy>
+    <copy includeemptydirs="false" todir="${dist.dir}/bin">
+      <fileset dir="${bin.dir}"/>
+    </copy>
+    <copy includeemptydirs="false" todir="${dist.dir}/lib">
+      <fileset dir="${lib.dir}/runtime"/>
+    </copy>
+
+
+    <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+      <fileset dir="${build.dir}"
+          includes="**/*.class"/>
+      <!-- Standard information about the program for the jar -->
+      <manifest>
+        <attribute name="Implementation-Vendor" value="Neustar, Inc."/>
+        <attribute name="Implementation-Title" value="${ant.project.name}"/>
+        <attribute name="Implementation-Version" value="${full.version}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- TODO -->
+  <target name="coverage"/>
+  
+  <target name="test" depends="compile-tests">
+<!--    <test-units/>
+    <test-stories />
+-->
+  </target>
+
+
+  <!-- TODO -->
+  <target name="package" depends="clean-resolve,coverage,test,dist"/>
+
+</project>
+

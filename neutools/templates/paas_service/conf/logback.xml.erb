@@ -1,0 +1,25 @@
+<configuration scan="true" scanPeriod="30 seconds">
+  <jmxConfigurator />
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/log/<%= proj_name %>/<%= proj_name %>_app.log</file>
+    <encoder>
+      <pattern>%date %level [%thread] %logger{5} %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>/var/log/<%= proj_name %>/<%= proj_name %>_app-%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <!-- 10 days of history -->
+      <maxHistory>10</maxHistory> 
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches 100MB -->
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>    
+  </appender>
+
+  <root level="ERROR">
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>
+
