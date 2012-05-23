@@ -9,20 +9,10 @@
 package biz.neustar.service.metrics.config;
 
 import java.net.InetSocketAddress;
-import java.util.EnumSet;
-import java.util.Map;
-
-import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.GzipFilter;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
@@ -38,16 +28,11 @@ import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
 import org.springframework.jmx.support.MBeanServerFactoryBean;
 import org.springframework.validation.Validator;
 
-import biz.neustar.service.common.cxf.ServletHolderFactory;
+import biz.neustar.service.common.cxf.JacksonProviders;
 import biz.neustar.service.common.cxf.SpringJaxrsServlet;
 import biz.neustar.service.common.spring.PropertySourcesUtil;
+import biz.neustar.service.common.util.JettyServerUtil;
 import biz.neustar.service.metrics.ws.MetricsService;
-
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper;
-import com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper;
-import com.google.common.collect.Maps;
 
 //This 'should' work according to the docs, however it only works if the configEnv properties file is 1st
 //@PropertySource({"classpath:defaults/app.properties","classpath:${configEnv:defaults}/app.properties"})
@@ -77,13 +62,13 @@ public class AppConfig {
     	return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
     }
     
-    
+    /*
     @Bean
     public static PropertySourcesPlaceholderConfigurer pspc(StandardEnvironment env) {
         PropertySourcesPlaceholderConfigurer propertyConfigurer = new PropertySourcesPlaceholderConfigurer();
         propertyConfigurer.setPropertySources(PropertySourcesUtil.reorderPropertySources(env));
         return propertyConfigurer;
-    }
+    }*/
     
     
     /* maybe?
@@ -130,66 +115,32 @@ public class AppConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server getServer() {
         LOGGER.debug("initializing server");
-        Server server = new Server(new InetSocketAddress(serverPort));
-        server.setSendServerVersion(false);
-        server.setThreadPool(new QueuedThreadPool(serverMaxThreadPool));
-        
-        // static content
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setDirectoriesListed(false);
-        resourceHandler.setResourceBase(staticPath());
-        LOGGER.debug("resource base: {} ", resourceHandler.getResourceBase());
-        ContextHandler ctxHandler = new ContextHandler();
-        ctxHandler.setContextPath("/");
-        ctxHandler.setHandler(resourceHandler);
-        
+        Server server = JettyServerUtil.createServer(
+                new InetSocketAddress(serverPort), 
+                serverMaxThreadPool);
+                
         // servlet context
-        ServletContextHandler context =
-                new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        context.addServlet(servletHolder(), "/*"); // hand everything off to the CXF and let it map the paths
-        context.addFilter(gzipFilter(), "/*", 
-                EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST));
-
+        ServletContextHandler context = 
+                JettyServerUtil.createServletHandler(
+                        springJaxrsServlet(), MetricsService.class);
+        
         // set of handlers
         HandlerList handlers = new HandlerList();
-        handlers.addHandler(resourceHandler);
+        handlers.addHandler(
+                JettyServerUtil.createStaticHandler(staticPath()));
         handlers.addHandler(context);
         
         server.setHandler(handlers);
         
-        server.setStopAtShutdown(true);
         return server;
     }
     
     
     @Bean
-    public FilterHolder gzipFilter() {
-        FilterHolder filter = new FilterHolder(GzipFilter.class);
-        filter.setName("gzipFilter");
-        Map<String, String> params = Maps.newHashMap();
-        params.put("minGzipSize", "0");
-        filter.setInitParameters(params);
-        return filter;
-    }
-    
-    @Bean
-    public ServletHolder servletHolder() {
-        ServletHolderFactory servletHolder = new ServletHolderFactory();
-        return servletHolder.getServletHolder(springJaxrsServlet(),
-                MetricsService.class);
-    }
-    
-    @Bean
     public SpringJaxrsServlet springJaxrsServlet() {
         SpringJaxrsServlet servlet = new SpringJaxrsServlet();
         // add the jackson json providers
-        JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
-        jsonProvider.configure(
-                SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        servlet.addProvider(jsonProvider);
-        servlet.addProvider(new JsonMappingExceptionMapper());
-        servlet.addProvider(new JsonParseExceptionMapper());
+        JacksonProviders.registerJsonProvider(servlet);
         return servlet;
     }
 }
