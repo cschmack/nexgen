@@ -1,11 +1,19 @@
 <!-- dont include directly, use common.xml -->
 <project name="test-common">
 
+  <path id="jacoco.classpath">
+    <fileset dir="${lib.dir}/test">
+      <include name="**/*jacoco*.jar"/>
+      <include name="**/*asm*.jar"/>
+    </fileset>
+  </path>
+
+
   <!-- junit support -->
   <macrodef name="test-units">  
     <element name="junit-args" optional="yes"/>
     <element name="junit-classpath" optional="yes"/>
-    <attribute name="coverage" default="yes" />
+    <attribute name="coverage" default="true" />
     <attribute name="include-pattern" default="**/*Test.java" />
     <attribute name="exclude-pattern" default="" />
     <attribute name="jvmargs" default="" />
@@ -13,14 +21,17 @@
     <sequential>
       <delete dir="${reports.dir}/units"/>
       <mkdir dir="${reports.dir}/units"/>
-      
       <delete dir="${report.dir}/coverage"/>
 
-      <antcall target="-emma-init">
-        <param name="coverage.enabled" value="@{coverage}"/>
-      </antcall>
-      
+     <taskdef name="coverage" classname="org.jacoco.ant.CoverageTask" classpathref="jacoco.classpath"/>
+     <taskdef name="agent" classname="org.jacoco.ant.AgentTask" classpathref="jacoco.classpath"/>
+     <taskdef name="report" classname="org.jacoco.ant.ReportTask" classpathref="jacoco.classpath"/>
+     <taskdef name="merge" classname="org.jacoco.ant.MergeTask" classpathref="jacoco.classpath"/>
+     <taskdef name="dump" classname="org.jacoco.ant.DumpTask" classpathref="jacoco.classpath"/>
+
+     <coverage destfile="${reports.dir}/jacoco.exec" enabled="@{coverage}">
       <junit printsummary="yes" 
+        fork="yes" forkmode="once"
         haltonfailure="false"
         maxmemory="@{maxmemory}"
         failureProperty="test.failure">
@@ -29,105 +40,127 @@
               <pathelement path="${test.dir}:${config.dir}"/>
               <!-- put coverage instrumented classes first on classpath -->
               <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
-              <fileset dir="${lib.dir}/test" includes="*.jar" excludes="ant.jar"/>
+              <path refid="test.classpath"/>
               <junit-classpath/>
           </classpath>
           
-          <jvmarg value="-Demma.coverage.out.file=${coverage.build.dir}/coverage.emma" />
-          <jvmarg value="-Demma.coverage.out.merge=true" />
-          <jvmarg line="@{jvmargs}" />
+          <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
           <formatter type="xml"/>
-          <batchtest fork="yes" todir="${reports.dir}/units">
+          <batchtest todir="${reports.dir}/units">
             <fileset dir="${test.dir}">
               <include name="@{include-pattern}"/>
               <exclude name="@{exclude-pattern}"/>
             </fileset>
           </batchtest>
         </junit>
-        <fail message="Unit Tests Failed" if="test.failure" />
-        
-        <antcall target="-emma-final">
-          <param name="coverage.enabled" value="@{coverage}"/>
-        </antcall>
-        
-      </sequential>
-  </macrodef>
-  
-  <!-- emma support -->
-  <target name="-emma-init" if="${coverage.enabled}">
-
-    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
-    <mkdir dir="${coverage.report.dir}"/>
-
-  	<!-- Instrument classes in the build directory -->
-    <taskdef resource="emma_ant.properties">
-      <classpath>
-        <pathelement location="${lib.dir}/test/emma.jar" />
-        <pathelement location="${lib.dir}/test/emma_ant.jar" />
-      </classpath>
-    </taskdef>
+     </coverage>
+     <fail message="Unit Tests Failed" if="test.failure" />
     
-    <emma enabled="${coverage.enabled}" >
-      <instr destdir="${coverage.build.dir}" metadatafile="${coverage.build.dir}/metadata.emma" merge="false">
-        <instrpath>
-          <pathelement location="${build.dir}"/>
-        </instrpath>
-      </instr>
-    </emma>
-  </target>
-	
-  <target name="-emma-final" if="${coverage.enabled}">
-    <property name="coverage.report.dir" value="${reports.dir}/coverage"/>
-    <taskdef resource="emma_ant.properties">
-      <classpath>
-        <pathelement location="${lib.dir}/test/emma.jar" />
-        <pathelement location="${lib.dir}/test/emma_ant.jar" />
-      </classpath>
-    </taskdef>
-    <!-- generate coverage report -->
-    <emma enabled="${coverage.enabled}" >
+      <antcall target="-coverage-report">
+        <param name="coverage.enabled" value="@{coverage}"/>
+      </antcall> 
+        
+    </sequential>
+  </macrodef>
+
+  <target name="-coverage-report" if="${coverage.enabled}">
       <report>
-        <sourcepath id="coverage.src.dir">
-          <pathelement path="${src.dir}"/>
-        </sourcepath>
-        <fileset dir="${coverage.build.dir}">
-          <include name="*.emma"/>
-        </fileset>
-        <txt outfile="${coverage.report.dir}/coverage.txt"/>
-        <html outfile="${coverage.report.dir}/coverage.html"/>
-        <xml outfile="${coverage.report.dir}/coverage.xml"/>
+         <executiondata>
+          <file file="${reports.dir}/jacoco.exec"/>
+        </executiondata>
+                        
+        <structure name="${ant.project.name}">
+          <classfiles>
+            <fileset dir="${build.dir}/"/>
+          </classfiles>
+          <sourcefiles encoding="UTF-8">
+            <fileset dir="${src.dir}"/>
+          </sourcefiles>
+        </structure>
+        <html destdir="${reports.dir}/coverage"/>
+        <xml destfile="${reports.dir}/coverage/coverage_jacoco.xml"/>
       </report>
-    </emma>
+      <!-- https://issues.jenkins-ci.org/browse/JENKINS-10835 -->
+      <copy file="${lib.dir}/ivy/support/report.dtd" todir="${reports.dir}/coverage"/>
+      <xslt style="${lib.dir}/ivy/support/jacoco_to_emma.xslt" 
+            in="${reports.dir}/coverage/coverage_jacoco.xml" 
+            out="${reports.dir}/coverage/coverage.xml" >
+            <!-- saxon or some other xslt2/xpath2 processor is required -->
+          <classpath>
+              <pathelement location="${lib.dir}/test/Saxon-HE.jar"/>
+              <pathelement location="${lib.dir}/test/org.jacoco.report.jar"/>
+              <path refid="jacoco.classpath"/>
+          </classpath>
+        <xmlcatalog>
+          <dtd 
+            publicId="-//JACOCO//DTD Report 1.0//EN"
+            location="org/jacoco/report/xml/report.dtd"/>
+        </xmlcatalog>
+       </xslt>
   </target>
-  
+
   
   <!-- cuke support -->
   
-  <property name="jruby.home" value="${basedir}/lib/.jruby"/>
+  <!-- default for jenkins to non-color mode, of course you can override this behavior with the macro -->
+  <condition property="default.cuke.color" value="yes" else="no">
+    <not><matches pattern="jenkins" string="${user.config}" /></not>
+  </condition>
   
-  <path id="cuke.classpath">
-    <fileset dir="${lib.dir}/test">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
   
-  <!-- required by cuke4duke.ant.JRubyTask.getJrubyClasspath -->
-  <path id="jruby.classpath">
-    <path refid="cuke.classpath"/>
-  </path>
+  <macrodef name="test-stories">
+    <!-- classpath to use for junit, in addition to the defaults -->
+    <element name="junit-classpath" optional="yes"/>
+    <!-- any special jvm arguments -->
+    <attribute name="jvmargs" default="" />
+    <!-- enable coloring of the output, defaults to true for everyone except 'jenkins' -->
+    <attribute name="color" default="${default.cuke.color}"/>
   
-  <target name="-install-cuke-gems" unless="cuke-gem.exists">
-    <taskdef name="gem" classname="cuke4duke.ant.GemTask" classpathref="cuke.classpath"/>
-    <!-- lib/.jruby/gems/cuke4duke-0.4.3 -->
-    <gem args="install cuke4duke --version ${cukeVersion}"/>
-  </target>
+    <sequential>
+      <delete dir="${reports.dir}/stories"/>
+      <mkdir dir="${reports.dir}/stories"/>
+      
+      <condition property="cuke.color" value="" else="-m">
+        <istrue value="@{color}"/>
+      </condition>
+
+      <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
+          <classpath>
+            <!-- load from test conf first -->
+            <pathelement path="${test.dir}:${config.dir}"/>
+            <!-- put coverage instrumented classes first on classpath -->
+            <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
+            <path refid="test.classpath"/>
+            <junit-classpath/>
+          </classpath>
+
+          <!-- user configuration properties -->              
+          <jvmarg line="-DconfigEnv=${user.config} @{jvmargs}" />
+
+          <arg 
+            line="--format junit:${reports.dir}/stories/cuke-report.xml --format pretty ${cuke.color} --glue biz.neustar.service.metrics ${test.base.dir}/stories"/>
+      </java>
+
+      <junitreport todir="${reports.dir}/stories">
+          <fileset dir="${reports.dir}/stories">
+              <include name="cuke-report.xml"/>
+          </fileset>
+          <report format="frames" todir="${reports.dir}/stories"/>
+      </junitreport>
+
+      <fail message="Cucumber failed">
+          <condition>
+              <not>
+                  <equals arg1="${cucumber.exitstatus}" arg2="0"/>
+              </not>
+          </condition>
+      </fail>
+    </sequential>
+  </macrodef>
   
-  <!-- needs project to have:
-       lib/test, test/stories
-       test/ruby (extra support in ruby, if required)
-       
-  -->
-  <!-- you don't necessarily have to cucumber.xml for spring, you can set it:  -Dcuke4duke.springXml=something_else.xml  -->
+  
+  
+  <!--  
   <macrodef name="test-stories">
     <element name="junit-args" optional="yes"/>
     <element name="junit-classpath" optional="yes"/>
@@ -136,50 +169,8 @@
     <attribute name="cukeVerbose" default="false"/>
     <attribute name="cukeColor" default="yes"/>
     <attribute name="coverage" default="yes" />
-  	
-    <sequential>
-      <available property="cuke-gem.exists" file="${jruby.home}/gems/cuke4duke-@{cukeVersion}"/>
-      
-      <antcall target="-install-cuke-gems">
-        <param name="cukeVersion" value="@{cukeVersion}"/>
-      </antcall>
-      
-      <taskdef name="cucumber" classname="cuke4duke.ant.CucumberTask" classpathref="cuke.classpath"/>
-      
-        <condition property="cukeVerboseSwitch" value="--verbose" else="">
-          <istrue value="@{cukeVerbose}"/>
-        </condition>
+  	-->
 
-        <condition property="cukeColorSwitch" value="--color" else="">
-          <istrue value="@{cukeColor}"/>
-        </condition>
-
-      <antcall target="-emma-init">
-        <param name="coverage.enabled" value="@{coverage}"/>
-      </antcall>
-
-      <cucumber
-        args="${cukeVerboseSwitch} --require ${test.build.dir} --require ${test.dir}/ruby ${cukeColorSwitch} --format pretty --format junit --out ${reports.dir}/stories ${test.dir}/stories"
-        objectFactory="spring">
-         <classpath>
-           <!-- load from test conf first -->
-           <pathelement path="${test.dir}:${config.dir}"/>
-           <!-- put coverage instrumented classes first on classpath -->
-           <pathelement path="${coverage.build.dir}:${test.build.dir}:${build.dir}/"/>
-           <fileset dir="${lib.dir}/test" includes="*.jar"/>
-           <junit-classpath/>
-       </classpath>
-        <jvmarg value="-Demma.coverage.out.file=${coverage.build.dir}/coverage.emma" />
-        <jvmarg value="-Demma.coverage.out.merge=true" />
-        <jvmarg line="@{jvmargs}" />
-      </cucumber>
-
-      <antcall target="-emma-final">
-          <param name="coverage.enabled" value="@{coverage}"/>
-      </antcall>
-
-    </sequential>
-  </macrodef>
-        
+  
 </project>
 

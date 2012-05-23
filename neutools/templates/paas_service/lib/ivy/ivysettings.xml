@@ -16,6 +16,27 @@
       <artifact pattern="${nexus.url}/content/repositories/releases/[organisation]/[module]/[revision]/[artifact].[ext]"/>
       <ivy pattern="${nexus.url}/content/repositories/releases/[organisation]/[module]/[revision]/ivy.xml"/>
     </url>
+    
+    <ibiblio name="mvn.central" m2compatible="true" usepoms="true"
+      root="http://repo1.maven.org/maven2/"
+      pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+
+
+    <url name="spring" m2compatible="true">
+      <artifact pattern="http://maven.springframework.org/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+      <ivy pattern="http://maven.springframework.org/release/[organisation]/[module]/[revision]/ivy.xml"/>
+    </url>
+
+
+    <url name="com.springsource.repository.bundles.release">
+      <ivy pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="http://repository.springsource.com/ivy/bundles/release/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+    </url>
+
+    <url name="com.springsource.repository.bundles.external">
+      <ivy pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+      <artifact pattern="http://repository.springsource.com/ivy/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" /> 
+    </url>
 
     <url name="snapshots"  m2compatible="true">
       <artifact pattern="${nexus.url}/content/repositories/snapshots/[organisation]/[module]/[revision]/[artifact].[ext]"/>
@@ -23,8 +44,9 @@
     </url>
 
     <chain name="neustar" returnFirst="true">
-      <resolver ref="releases"/>
-      <resolver ref="biz.neustar"/>
+      <resolver ref="mvn.central"/>
+      <resolver ref="com.springsource.repository.bundles.release"/>
+      <resolver ref="com.springsource.repository.bundles.external"/>
     </chain>
 
     <filesystem name="localjars">

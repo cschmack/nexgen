@@ -1,6 +1,11 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env"/>
 
+  <!-- config -->
+  <condition property="user.config" value="${env.CONFIG}" else="${env.USER}">
+    <isset property="env.CONFIG"/>
+  </condition>
+
   <!-- change the default order, jboss pom's didnt sha1 validate - either ivy bug or sha1 sig -->
   <!-- property name="ivy.checksums" value="md5,sha1" -->
   <!-- disabling all checks since mvn central and jboss repo has tons of invalid checksums, and it's big pain to fix manually -->
@@ -17,19 +22,42 @@
     </fail>
   </target>
 
-  <macrodef name="git-version">
+  <target name="generate-docs" description="generate documentation for the project">
+    <recreate-dir dir="${basedir}/docs"/>
+    <javadoc destdir="${basedir}/docs/java"
+           author="true"
+           version="true"
+           use="true"
+           useexternalfile="true"
+           classpathref="compile.classpath"
+           windowtitle="${ant.project.name} API">
+      <fileset dir="${src.dir}" defaultexcludes="yes">
+        <include name="**"/>
+      </fileset>
+      <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2011-2012 NeuStar, Inc. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+ 
+  <macrodef name="recreate-dir">
+    <attribute name="dir"/>
     <sequential>
-      <condition property="env_ver" value="${env.VERSION}" else="${version}">
-        <isset property="env.VERSION"/>
-      </condition>
-      <echo message="environment version is ${env_ver}"/>
-      <property name="major.version" value="${env_ver}"/>
+      <delete dir="@{dir}"/>
+      <mkdir dir="@{dir}"/>
+    </sequential>
+  </macrodef>
 
+  <target name="-git-revision-tmp">
       <exec executable="git" outputproperty="revision">
         <arg line="rev-parse --short HEAD"/>
       </exec>
 
-      <script language="javascript"> <![CDATA[
+<!-- rhino isnt working on ubuntu open-jdk7 https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/920214 -->
+      <script language="javascript" manager="javax">
+<classpath>
+   <fileset dir="${basedir}/lib/ivy" includes="js.jar"/> 
+  </classpath>
+        <![CDATA[
           importClass(java.lang.Integer);
           rev = project.getProperty("revision");
           revInt = Integer.valueOf(rev, 16);
@@ -38,6 +66,20 @@
           echo.perform();
           project.setProperty("revision", revInt);
          ]]> </script>
+  </target>
+
+  <macrodef name="git-version">
+    <sequential>
+      <condition property="env_ver" value="${env.VERSION}" else="0.0.0">
+        <isset property="env.VERSION"/>
+      </condition>
+      <echo message="environment version is ${env_ver}"/>
+      <property name="major.version" value="${env_ver}"/>
+
+      <exec executable="bash" outputproperty="revision">
+        <arg value="-c"/>
+        <arg value="echo  $((0x`git rev-parse --short HEAD`))"/>
+      </exec>
 
       <echo>Revision found: ${revision}</echo>
       <property name="full.version" value="${major.version}.${revision}"/>
@@ -103,13 +145,16 @@
     </sequential>
   </macrodef>
 
+  <!-- analysis support -->
+  <import file="${basedir}/lib/ivy/analysis-common.xml"/>
   <!-- tests support -->
   <import file="${basedir}/lib/ivy/test-common.xml"/>
 
   <property name="ivy.jar.dir" value="${basedir}/lib/ivy" />
 
   <path id="ivy.lib.path">
-    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    <!-- use the latest and greatest ivy -->
+    <fileset dir="${ivy.jar.dir}" includes="*.jar" excludes="ivy.jar"/>
   </path>
 
   <property name="user.ivy.defaultCacheDir"
@@ -122,7 +167,10 @@
     value="${user.ivy.defaultCacheDir}"
     else="${proj.ivy.defaultCacheDir}">
    <not>
+     <or>
      <equals arg1="${env.USER}" arg2="hudson"></equals>
+     <equals arg1="${env.USER}" arg2="jenkins"></equals>
+     </or>
    </not>
   </condition>
   
@@ -256,7 +304,7 @@
          ================================= -->
     <target name="clean-lib" description="--> clean the project libraries directory (dependencies)">
         <delete includeemptydirs="true">
-          <fileset dir="${lib.dir}" excludes="**/ivy/*,.jruby/**"/>
+          <fileset dir="${lib.dir}" excludes="**/ivy/**,.jruby/**"/>
         </delete>
     </target>
 
@@ -272,60 +320,6 @@
     <!-- target: clean -->
   <target name="clean" depends="clean-build, clean-lib" description="--> clean the project" />
 
-
-  <!-- target: pmd -->
-  <target name="pmd" description="--> generate pmd report">
-    <delete dir="${reports.dir}/pmd"/>
-    <mkdir dir="${reports.dir}/pmd"/>    
-    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
-  	  <classpath> 
-        <fileset dir="${lib.dir}/test" includes="pmd.jar"/>
-        <fileset dir="${lib.dir}/test" includes="asm.jar"/>
-        <fileset dir="${lib.dir}/test" includes="jaxen.jar"/>
-        <pathelement location="${basedir}/lib/ivy"/>
-      </classpath>
-    </taskdef>
-    <pmd shortFilenames="true" rulesetfiles="pmd_ruleset.xml">
-			<formatter type="xml" toFile="${reports.dir}/pmd/pmd.xml" />
-			<formatter type="html" toFile="${reports.dir}/pmd/pmd.html"/>
-			<fileset dir="${src.dir}">
-				<include name="**/*.java"/>
-				<exclude name="**/*Test*.java"/>
-			</fileset>
-		</pmd>
-	</target>
-	
-	 <!-- target: cpd - copy and paste detector  -->
-	<target name="cpd">
-		<delete dir="${reports.dir}/cpd"/>
-    <mkdir dir="${reports.dir}/cpd"/>    
-    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" >
-	    <classpath> 
-		        <fileset dir="${lib.dir}/test" includes="pmd.jar"/>
-		        <fileset dir="${lib.dir}/test" includes="asm.jar"/>
-		        <fileset dir="${lib.dir}/test" includes="jaxen.jar"/>
-		        <pathelement location="${basedir}/lib/ivy"/>
-		   
-	      	</classpath>
-	  </taskdef>
-    <cpd minimumTokenCount="100" outputFile="${reports.dir}/cpd/cpd.txt">
-        <fileset dir="${src.dir}">
-					<include name="**/*.java"/>
-					<exclude name="**/*Test*.java"/>
-				</fileset>
-    </cpd>
-	</target>
-	
-	<!-- target: sloc - source lines of code by language -->
-	<target name="sloc" description="generates lines of code per source file by language">
-		<delete file="${reports.dir}/sloccount.sc"/>
-		<echo message="sloccount --wide --details ${src.dir} > ${reports.dir}/sloccount.sc"/>
-		<exec executable="sloccount"           
-          output="${reports.dir}/sloccount.sc"
-				  failifexecutionfails="false">
-        <arg line="--wide --details ${src.dir}"/>
-		</exec>
-	</target>
 </project>
 
 
